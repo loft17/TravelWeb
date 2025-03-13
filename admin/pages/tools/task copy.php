@@ -1,7 +1,8 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
-include '../includes/templates/head.php';  
-include '../../config.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
+
+include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 // Conectar a la base de datos
 $conn = conectar_bd();
@@ -55,9 +56,10 @@ $hoy = date('Y-m-d');
 <html lang="en">
 
 <body>
+    <!-- page container area start -->
     <div class="page-container">
-        <?php include '../includes/templates/sidebar.php'; ?>
-        <?php include '../includes/templates/user-profile.php'; ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php';?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php';?>
         <div class="main-content">
 
             <!-- page title area end -->
@@ -157,11 +159,9 @@ $hoy = date('Y-m-d');
                 </div>
             </div>
         </div>
-        <!-- main content area end -->
-    </div>
-    <?php include '../includes/templates/footer.php'; ?>
-    <?php include '../includes/libraries/scripts.php'; ?>
-    </div>
+        <!-- page container area end -->
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
 </body>
 
 </html>

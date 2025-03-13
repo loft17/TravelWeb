@@ -37,7 +37,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-wrench"></i>
                             <span>Utilidades</span></a>
                         <ul class="collapse">
-                            <li><a href="/admin/utils/task.php">Tareas</a></li>
+                            <li><a href="/admin/pages/tools/task.php">Tareas</a></li>
                             <li><a href="/admin/pages/tools/maleta.php">Maleta</a></li>
                             <li><a href="/admin/pages/tools/emojis.php">Emojis</a></li>
                         </ul>

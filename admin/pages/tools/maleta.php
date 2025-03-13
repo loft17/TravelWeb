@@ -1,8 +1,8 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
+
 ?>
 
 
@@ -74,6 +74,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
                             </div>
                         </div>
                     </div>
+                    <!-- No gutters end -->
+
                     <!-- No gutters start -->
                     <div class="col-12 mt-5">
                         <div class="card">
@@ -135,6 +137,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
                             </div>
                         </div>
                     </div>
+                    <!-- No gutters end -->
                 </div>
             </div>
             <!-- Notificación de copiado -->
@@ -144,9 +147,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
 
     </div>
     <!-- page container area end -->
+    <script defer src="/admin/assets/js/maleta.js"></script>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
-    <script defer src="/admin/assets/js/maleta.js"></script>
 </body>
 
 </html>

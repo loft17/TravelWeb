@@ -1,4 +1,6 @@
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/content/uploads/' . date("Y-m-d") . '/';
 

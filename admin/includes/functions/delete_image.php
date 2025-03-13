@@ -1,4 +1,6 @@
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['image'])) {
     $imagePath = $_SERVER['DOCUMENT_ROOT'] . $_POST['image'];
 
