@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Ejecutar la consulta
     if ($stmt->execute()) {
-        header("Location: ../../adm/show_users.php?message=Usuario%20actualizado%20correctamente.");
+        header("Location: ../../pages/adm/show-users.php?message=Usuario%20actualizado%20correctamente.");
         exit();
     } else {
         echo "Error al actualizar el usuario.";

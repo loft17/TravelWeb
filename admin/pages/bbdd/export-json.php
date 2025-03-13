@@ -1,10 +1,10 @@
 <?php
 // Asegúrate de usar include_once para evitar duplicados
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/export_json.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 
-include_once '../../config.php';  // Incluir config.php una sola vez
-include_once '../includes/functions/export-json.php';  // Incluir el archivo de funciones
-include '../includes/templates/head.php';
 
 if (isset($_POST['exportar_json'])) {
     // Llamamos a la función que está en export-json.php para exportar los datos
@@ -16,16 +16,10 @@ if (isset($_POST['exportar_json'])) {
 <html class="no-js" lang="en">
 
 <body>
-
-    <!-- preloader area start -->
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
-    <!-- preloader area end -->
     <!-- page container area start -->
     <div class="page-container">
-        <?php include '../includes/templates/sidebar.php'; ?>
-        <?php include '../includes/templates/user-profile.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php';?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php';?>
 
 
         <!-- main content area start -->
@@ -59,10 +53,8 @@ if (isset($_POST['exportar_json'])) {
 
     </div>
     <!-- page container area end -->
-    <?php include '../includes/templates/footer.php'; ?>
-    
-    
-    <?php include '../includes/libraries/scripts.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
 </body>
 
 </html>

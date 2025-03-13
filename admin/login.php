@@ -2,6 +2,11 @@
 // Iniciar la sesión lo antes posible
 session_start();
 
+// Generar un token CSRF si no está definido
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Verificar si el usuario ya está logueado
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
     // Redirigir si el usuario ya está logueado y es admin

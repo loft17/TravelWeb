@@ -1,11 +1,9 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
-// Incluir la configuración de la base de datos y las funciones necesarias
-include_once '../../config.php';
-include '../includes/templates/head.php'; 
-include '../includes/functions/get-user.php'; // Incluir el archivo con la lógica para obtener el usuario
-include '../includes/functions/upload_img.php';  // Incluir la función para subir imágenes
-
+include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/get-user.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/upload_img.php';
 
 // Verificar que el parámetro 'id' está presente en la URL
 if (isset($_GET['id'])) {
@@ -30,17 +28,10 @@ if (isset($_GET['id'])) {
     <title>Editar Usuario</title>
 </head>
 <body>
-
-    <!-- preloader area start -->
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
-    <!-- preloader area end -->
-
     <!-- page container area start -->
     <div class="page-container">
-        <?php include '../includes/templates/sidebar.php'; ?>
-        <?php include '../includes/templates/user-profile.php'; ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php';?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php';?>
 
         <!-- main content area start -->
         <div class="main-content">
@@ -51,7 +42,7 @@ if (isset($_GET['id'])) {
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="header-title">Editar Usuario</h4>
-                                <form method="POST" action="../includes/functions/edit-user.php?id=<?php echo $user['id']; ?>">
+                                <form method="POST" action="../../includes/functions/edit_user.php?id=<?php echo $user['id']; ?>">
                                     <div class="form-group">
                                         <label for="name">Nombre</label>
                                         <input type="text" class="form-control" name="name" id="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
@@ -94,10 +85,10 @@ if (isset($_GET['id'])) {
     </div>
     <!-- page container area end -->
 
-    <?php include '../includes/templates/footer.php'; ?>
-    <?php include '../includes/libraries/scripts.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
     <!-- JavaScript para la vista previa de la imagen -->
-    <script src="../assets/js/previewImage.js"></script>
+    <script src="../../assets/js/previewImage.js"></script>
 
 </body>
 </html>

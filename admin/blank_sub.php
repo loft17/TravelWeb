@@ -1,6 +1,9 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
-include '../includes/templates/head.php';  // Asegúrate de que head.php tenga los elementos <head> y <meta> adecuados.
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
+
+// include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+// include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/export_sql.php';
 ?>
 
 
@@ -9,16 +12,10 @@ include '../includes/templates/head.php';  // Asegúrate de que head.php tenga l
 
 
 <body>
-
-    <!-- preloader area start -->
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
-    <!-- preloader area end -->
     <!-- page container area start -->
     <div class="page-container">
-        <?php include '../includes/templates/sidebar.php'; ?>
-        <?php include '../includes/templates/user-profile.php'; ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php';?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php';?>
 
 
         <!-- main content area start -->
@@ -49,10 +46,9 @@ include '../includes/templates/head.php';  // Asegúrate de que head.php tenga l
 
     </div>
     <!-- page container area end -->
-    <?php include '../includes/templates/footer.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
     
-    
-    <?php include '../includes/libraries/scripts.php'; ?>
 </body>
 
 </html>

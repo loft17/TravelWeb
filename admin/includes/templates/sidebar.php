@@ -53,20 +53,19 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
                     </li>
 
                     <li>
-                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cogs"></i>
-                            <span>Administración</span></a>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-database"></i>
+                            <span>Base de datos</span></a>
                         <ul class="collapse">
-                            <li><a href="/admin/adm/show_users.php">Usuarios</a></li>
-                            <li><a href="/admin/adm/portalconf.php">Portal</a></li>
+                            <li><a href="/admin/pages/bbdd/export-json.php">Export JSON</a></li>
+                            <li><a href="/admin/pages/bbdd/export-sql.php">Export SQL</a></li>
                         </ul>
                     </li>
 
                     <li>
-                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-database"></i>
-                            <span>Base de datos</span></a>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cogs"></i>
+                            <span>Administración</span></a>
                         <ul class="collapse">
-                            <li><a href="/admin/bbdd/export_json.php">Export JSON</a></li>
-                            <li><a href="/admin/bbdd/export_sql.php">Export SQL</a></li>
+                            <li><a href="/admin/pages/adm/show-users.php">Usuarios</a></li>
                         </ul>
                     </li>
                     

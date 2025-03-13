@@ -1,8 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-// Incluir el archivo de configuración para acceder a las constantes
-include_once '../../config.php';
 
 try {
     // Establecer conexión con la base de datos utilizando las constantes definidas en config.php
