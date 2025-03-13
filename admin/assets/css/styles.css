@@ -2835,3 +2835,25 @@ table.dataTable thead td {
 }
 
 /*-------------------- END Offset Sidebar ------------------- */
+
+
+
+.delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.delete-btn i {
+    color: red;
+    font-size: 16px;
+}

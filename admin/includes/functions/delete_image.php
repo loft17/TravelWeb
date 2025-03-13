@@ -1,22 +1,18 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['image'])) {
+    $imagePath = $_SERVER['DOCUMENT_ROOT'] . $_POST['image'];
 
-// Verificar si la imagen se recibe a través de la URL
-if (isset($_GET['image'])) {
-    $imagePath = $_SERVER['DOCUMENT_ROOT'] . $_GET['image'];
-
-    // Comprobar si el archivo existe
+    // Validar que el archivo existe
     if (file_exists($imagePath)) {
-        // Eliminar la imagen
-        unlink($imagePath);
-
-        // Redirigir de vuelta al listado de imágenes
-        header('Location: ../../files/show_imgs.php');
-        exit();
+        if (unlink($imagePath)) {
+            echo "success"; // Imagen eliminada correctamente
+        } else {
+            echo "error"; // No se pudo eliminar
+        }
     } else {
-        echo "La imagen no existe.";
+        echo "error"; // Archivo no encontrado
     }
 } else {
-    echo "No se especificó ninguna imagen para eliminar.";
+    echo "error"; // Petición inválida
 }
 ?>

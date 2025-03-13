@@ -1,0 +1,18 @@
+<?php
+
+// Directorio de imágenes
+$directory = $_SERVER['DOCUMENT_ROOT'] . '/content/uploads/';
+$extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+// Buscar imágenes en la carpeta y subcarpetas
+$images = [];
+foreach ($extensions as $ext) {
+    $images = array_merge($images, glob($directory . '*/*.' . $ext, GLOB_BRACE));
+}
+
+// Convertir rutas absolutas en rutas relativas para visualización en la web
+$relative_images = [];
+foreach ($images as $img) {
+    $relative_images[] = str_replace($_SERVER['DOCUMENT_ROOT'], '', $img);
+}
+?>

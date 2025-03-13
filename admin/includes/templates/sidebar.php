@@ -47,8 +47,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-folder"></i>
                             <span>Ficheros</span></a>
                         <ul class="collapse">
-                            <li><a href="/admin/files/show_imgs.php">Imagenes</a></li>
-                            <li><a href="/admin/files/upload_imgs.php">Subir</a></li>
+                            <li><a href="/admin/pages/files/show-imgs.php">Imagenes</a></li>
+                            <li><a href="/admin/pages/files/upload-imgs.php">Subir</a></li>
                         </ul>
                     </li>
 
