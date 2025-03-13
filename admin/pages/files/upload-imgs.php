@@ -43,13 +43,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/upload_imagen.php
                             <div class="card-body">
                                 <div class="header-title">Subir Imagen</div>
 
-                                
-
                                 <!-- Contenedor de arrastrar y soltar -->
                                 <div id="upload-container" class="upload-container">
                                     <p>Arrastra y suelta tu imagen aquí o <span style="color: blue; cursor: pointer;" onclick="document.getElementById('fileInput').click();">haz clic para seleccionar</span></p>
                                     <input type="file" id="fileInput" class="hidden-input" accept="image/png, image/jpeg, image/gif, image/webp">
                                 </div>
+
                             </div>
                         </div>
                         

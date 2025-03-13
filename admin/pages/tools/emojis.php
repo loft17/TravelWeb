@@ -1,27 +1,22 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
-include '../includes/templates/head.php';
-include '../includes/functions/emojis.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/emojis.php';
+
 
 // Leer el archivo JSON usando la función
-$jsonFile = '../assets/json/emojis.json';
+$jsonFile = $_SERVER['DOCUMENT_ROOT'] . '/admin/assets/json/emojis.json';
 $categorias = obtenerCategoriasEmojis($jsonFile);
 ?>
 
 <!doctype html>
 <html class="no-js" lang="en">
 
-
 <body>
-    <!-- preloader area start -->
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
-    <!-- preloader area end -->
     <!-- page container area start -->
     <div class="page-container">
-        <?php include '../includes/templates/sidebar.php'; ?>
-        <?php include '../includes/templates/user-profile.php'; ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php';?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php';?>
 
         <div class="main-content-inner">
                 <div class="row">
@@ -61,11 +56,9 @@ $categorias = obtenerCategoriasEmojis($jsonFile);
 
     </div>
     <!-- page container area end -->
-    <?php include '../includes/templates/footer.php'; ?>
-    
-    
-    <?php include '../includes/libraries/scripts.php'; ?>
-    <script src="../assets/js/copy-emojis.js"></script>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
+    <script defer src="/admin/assets/js/copy-emojis.js"></script>
 </body>
 
 </html>

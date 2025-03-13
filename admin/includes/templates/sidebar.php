@@ -38,8 +38,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
                             <span>Utilidades</span></a>
                         <ul class="collapse">
                             <li><a href="/admin/utils/task.php">Tareas</a></li>
-                            <li><a href="/admin/utils/maleta.php">Maleta</a></li>
-                            <li><a href="/admin/utils/emojis.php">Emojis</a></li>
+                            <li><a href="/admin/pages/tools/maleta.php">Maleta</a></li>
+                            <li><a href="/admin/pages/tools/emojis.php">Emojis</a></li>
                         </ul>
                     </li>
 
