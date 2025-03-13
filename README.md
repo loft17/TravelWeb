@@ -1,6 +1,5 @@
 # Pendientes:
-- Optimizar maleta.php
-- Optimizar task.php
+- TAREAS, que se vea mas parecido al resto de paginas como la de emojis.php, maleta.php
 
 
 # Puesta en Marcha
