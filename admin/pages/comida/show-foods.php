@@ -84,7 +84,7 @@ $conn->close();
                                                             ?>
                                                     </td>
                                                     <td>
-                                                        <a href="editar_comida.php?id=<?php echo $row['id']; ?>"
+                                                        <a href="edit-food.php?id=<?php echo $row['id']; ?>"
                                                             class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
                                                         <a href="borrar_comida.php?id=<?php echo $row['id']; ?>"
                                                             class="btn btn-danger btn-sm"
