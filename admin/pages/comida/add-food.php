@@ -31,33 +31,45 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                 
                                 <!-- Formulario con enctype para permitir subir archivos -->
                                 <form action="add-food.php" method="post" enctype="multipart/form-data" onsubmit="updateDescription()">
-                                    <div class="form-group">
-                                        <label for="nombre">Nombre:</label>
-                                        <input type="text" class="form-control" name="nombre" id="nombre" required>
+
+                                    <!-- NOMBRE -->
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <label for="nombre">Nombre:</label>
+                                            <input type="text" class="form-control" name="nombre" id="nombre" required>
+                                        </div>
                                     </div>
-                                    
+
                                     <!-- Editor Quill para la descripción -->
-                                    <div class="form-group">
-                                        <label for="descripcion">Descripción:</label>
-                                        <div id="editor-container" style="height: 200px;"></div>
-                                        <input type="hidden" name="descripcion" id="descripcion">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <label for="descripcion">Descripción:</label>
+                                            <div id="editor-container" style="height: 200px;"></div>
+                                            <input type="hidden" name="descripcion" id="descripcion">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <!-- Campo de texto para URL de imagen (opcional) -->
+                                        <div class="col-sm-6">
+                                            <label for="imagen_url">URL de la Imagen (opcional):</label>
+                                            <input type="text" class="form-control" name="imagen_url" id="imagen_url">
+                                        </div>
+
+                                        <!-- Campo para subir imagen y mostrar miniatura -->
+                                        <div class="col-sm-6">
+                                            <label for="imagen_file">Subir Imagen:</label>
+                                            <input type="file" class="form-control" name="imagen_file" id="imagen_file" accept="image/jpeg, image/png, image/webp">
+                                        </div>
                                     </div>
 
                                     
-                                    <!-- Campo de texto para URL de imagen (opcional) -->
-                                    <div class="form-group">
-                                        <label for="imagen_url">URL de la Imagen (opcional):</label>
-                                        <input type="text" class="form-control" name="imagen_url" id="imagen_url">
+                                    <!-- Miniatura de la imagen -->
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <img id="imagen_preview" src="" style="max-width: 200px; margin-top: 10px;">
+                                        </div>
                                     </div>
-                                    
-                                    <!-- Campo para subir imagen y mostrar miniatura -->
-                                    <div class="form-group">
-                                        <label for="imagen_file">Subir Imagen:</label>
-                                        <input type="file" class="form-control" name="imagen_file" id="imagen_file" accept="image/jpeg, image/png, image/webp">
-                                        <!-- Miniatura de la imagen -->
-                                        <img id="imagen_preview" src="" style="max-width: 200px; margin-top: 10px;">
-                                    </div>
-                                    
 
                                     <button type="submit" class="btn btn-primary">Agregar</button>
                                     <a href="show-foods.php" class="btn btn-secondary">Cancelar</a>
