@@ -16,7 +16,7 @@ document.getElementById('imagen_file').addEventListener('change', function() {
         var formData = new FormData();
         formData.append('imagen_file', fileInput.files[0]);
         
-        fetch('/admin/includes/functions/add_food.php?action=upload_image', {
+        fetch('/admin/includes/functions/add_atraccion.php?action=upload_image', {
             method: 'POST',
             body: formData
         })
@@ -25,7 +25,6 @@ document.getElementById('imagen_file').addEventListener('change', function() {
             if (data.error) {
                 alert(data.error);
             } else if (data.imagen_url) {
-                // Actualizar la miniatura y el campo de URL
                 document.getElementById('imagen_preview').src = data.imagen_url;
                 document.getElementById('imagen_url').value = data.imagen_url;
             }

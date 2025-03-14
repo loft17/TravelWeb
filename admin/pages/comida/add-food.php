@@ -1,6 +1,7 @@
-<?php 
-include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_food.php'; 
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_food.php'; 
 ?>
 
 <!doctype html>
@@ -63,7 +64,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                         </div>
                                     </div>
 
-                                    
                                     <!-- Miniatura de la imagen -->
                                     <div class="form-group row">
                                         <div class="col-sm-12">

@@ -25,6 +25,16 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 
                     <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cutlery"></i>
+                            <span>Atracciones</span></a>
+                        <ul class="collapse">
+                            <li><a href="/admin/pages/atracciones/add-atraccion.php">Nueva atraccion</a></li>
+                            <li><a href="/admin/pages/comida/show-foods.php">Ver platos</a></li>
+                            <li><a href="/admin/pages/comida/change-food.php">Cambiar estado</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cutlery"></i>
                             <span>Platos</span></a>
                         <ul class="collapse">
                             <li><a href="/admin/pages/comida/add-food.php">Nuevo plato</a></li>
