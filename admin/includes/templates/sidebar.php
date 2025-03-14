@@ -28,11 +28,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
                             <span>Atracciones</span></a>
                         <ul class="collapse">
                             <li><a href="/admin/pages/atracciones/add-atraccion.php">Nueva atraccion</a></li>
-                            <li><a href="/admin/pages/comida/show-foods.php">Ver platos</a></li>
-                            <li><a href="/admin/pages/comida/change-food.php">Cambiar estado</a></li>
+                            <li><a href="/admin/pages/atracciones/show-atraccion.php">Ver Atracciones</a></li>
+                            <li><a href="/admin/pages/atracciones/reset-seen-attractions.php">Marcar atracciones:<br>No Visto</a></li>
+                            <li><a href="/admin/pages/atracciones/reset-active-attractions.php">Marcar atracciones:<br>Activado</a></li>
                         </ul>
                     </li>
-
+                    
                     <li>
                         <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cutlery"></i>
                             <span>Platos</span></a>

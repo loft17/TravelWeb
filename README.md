@@ -1,5 +1,7 @@
 # Pendientes:
 - TAREAS, que se vea mas parecido al resto de paginas como la de emojis.php, maleta.php
+- Revisar footer.php que este correctamente configurado
+- Notificaciones al editar comida, atracciones
 
 
 # Puesta en Marcha
@@ -46,7 +48,7 @@ http://localhost/admin/install.php
 ```
 
 # Contribuciones
-- **[RuangAdmin](https://github.com/indrijunanda/RuangAdmin)** de indrijunanda
+- **[SRTdash admin dashboard](https://github.com/puikinsh/srtdash-admin-dashboard)** de puikinsh
 
-# v2025.03.12
+# v2025.03.14
 ..

@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sisssssssssiii", $ciudad, $orden, $fecha, $nombre, $descripcion, $imagen_url, $mapa_url, $wikipedia_url, $instagram_url_1, $instagram_url_2, $instagram_url_3, $visto, $activo, $id);
 
     if ($stmt->execute()) {
-        header("Location: show-atracciones.php");
+        header("Location: /admin/pages/atracciones/show-atraccion.php");
         exit;
     } else {
         $error = "Error al actualizar registro: " . $stmt->error;

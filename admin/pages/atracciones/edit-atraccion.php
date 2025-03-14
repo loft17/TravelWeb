@@ -1,4 +1,10 @@
-<?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/edit_atraccion.php'; ?>
+<?php 
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/edit_atraccion.php'; 
+?>
+
+
 <!doctype html>
 <html class="no-js" lang="en">
 <head>
