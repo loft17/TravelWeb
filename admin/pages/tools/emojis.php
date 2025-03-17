@@ -72,10 +72,10 @@ $categorias = obtenerCategoriasEmojis($jsonFile);
 
         </div>
         <!-- main content area end -->
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
 
     </div>
     <!-- page container area end -->
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
     <script defer src="/admin/assets/js/copy-emojis.js"></script>
 </body>

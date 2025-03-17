@@ -90,9 +90,10 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/task.php';
             </div>
         </div>
     </div>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
 </div>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
+
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
 <script defer src="/admin/assets/js/task.js"></script>
 
