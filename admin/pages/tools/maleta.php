@@ -81,6 +81,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
                         <div class="card">
                             <div class="card-body">
                                 <div class="header-title">MALETA</div>
+                                <!-- Botón para exportar a PDF -->
+                                <a href="/admin/includes/functions/exportar_pdf.php" class="btn btn-danger">Exportar a PDF</a>
 
                                 <div class="row">
                                     <?php foreach ($articulos_por_categoria as $categoria => $items): ?>
