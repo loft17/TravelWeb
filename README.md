@@ -9,6 +9,10 @@
 git clone https://github.com/loft17/TravelGuide.git
 ```
 
+Requisitos:
+apt install php-mbstring
+
+
 ## Configuración
 
 
