@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Si el checkbox acaba de quedar marcado, el estado anterior era 'false'
             var currentState = this.checked ? 'false' : 'true';
             
-            fetch('../v2/includes/update_visto.php', {  // Asegúrate de que la ruta sea correcta
+            fetch('../plan/includes/update_visto.php', {  // Asegúrate de que la ruta sea correcta
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

@@ -2,22 +2,24 @@
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 
-// Incluimos el fichero de funciones que contiene toda la lógica de configuración.
+// Incluimos el fichero de funciones que contiene la lógica de configuración.
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/config_web.php';
 
-// Ejecutamos la función que procesa la actualización (si es que se envía el formulario)
+// Ejecutamos la función que procesa la actualización (si se envía el formulario)
 // y obtiene los valores actuales.
 $configData = process_config_web();
 $fields = $configData['fields'];
 $currentValues = $configData['currentValues'];
+$notification = isset($configData['notification']) ? $configData['notification'] : '';
 ?>
 
 <!doctype html>
 <html class="no-js" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Configuraciones</title>
-    <!-- Incluye tus hojas de estilo necesarias -->
+    <title>Configuración del Sitio</title>
+    <!-- Incluye los estilos de Bootstrap -->
+    <link rel="stylesheet" href="/path/to/bootstrap.min.css">
 </head>
 <body>
     <!-- Contenedor principal -->
@@ -43,19 +45,23 @@ $currentValues = $configData['currentValues'];
                                     <?php endforeach; ?>
                                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                                 </form>
+
                             </div>
                         </div>
                     </div>
                     <!-- Fin del contenedor -->
                 </div>
+                <!-- Notificación de copiado -->
+                <br><div id="copyNotification"><?php if (!empty($notification)) echo $notification; ?></div>
             </div>
-            <!-- Notificación de copiado -->
-            <div id="copyNotification" style="display: none;" class="alert"></div>
         </div>
         <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
     </div>
     <!-- Fin del contenedor principal -->
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
+    <!-- Asegúrate de cargar jQuery y Bootstrap JS -->
+    <script src="/path/to/jquery.min.js"></script>
+    <script src="/path/to/bootstrap.bundle.min.js"></script>
 </body>
 </html>

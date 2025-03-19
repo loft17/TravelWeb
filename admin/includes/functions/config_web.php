@@ -7,9 +7,10 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 /**
  * Procesa la actualización de las configuraciones y retorna los valores actuales.
  *
- * @return array Retorna un arreglo asociativo con dos claves:
+ * @return array Retorna un arreglo asociativo con tres claves:
  *               - 'fields': arreglo de campos definidos (config_key => etiqueta)
  *               - 'currentValues': arreglo con los valores actuales (config_key => config_value)
+ *               - 'notification': mensaje de notificación (si se actualizó el formulario)
  */
 function process_config_web() {
     // Creamos la conexión a la base de datos.
@@ -20,6 +21,9 @@ function process_config_web() {
         'title_web'   => 'Título',
         'footer_text' => 'Pie de Página'
     ];
+
+    // Inicializamos la variable de notificación.
+    $notification = '';
 
     // Si se envía el formulario, se actualizan los valores.
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -34,7 +38,7 @@ function process_config_web() {
                 echo "<div class='alert alert-danger'>Error en la consulta para $label: " . $conn->error . "</div>";
             }
         }
-        echo "<div class='alert alert-success'>Las configuraciones se han actualizado correctamente.</div>";
+        $notification = "<div class='alert alert-success'>Las configuraciones se han actualizado correctamente.</div>";
     }
 
     // Recuperamos los valores actuales de la base de datos.
@@ -54,5 +58,5 @@ function process_config_web() {
         echo "<div class='alert alert-danger'>Error en la consulta: " . $conn->error . "</div>";
     }
 
-    return ['fields' => $fields, 'currentValues' => $currentValues];
+    return ['fields' => $fields, 'currentValues' => $currentValues, 'notification' => $notification];
 }

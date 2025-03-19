@@ -1,7 +1,5 @@
 # Pendientes:
-- TAREAS, que se vea mas parecido al resto de paginas como la de emojis.php, maleta.php
-- Notificaciones al editar comida, atracciones
-- Ver platos, usuarios tenga el mismo diseño que la de ver atracciones
+- Notificaciones al editar comida, atracciones, utilidades, ficheros...
 - Cambiar diseño del header.php
 - Modificar el desplegable del usuario loegado
 -
