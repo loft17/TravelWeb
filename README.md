@@ -2,7 +2,6 @@
 - Notificaciones al editar comida, atracciones, utilidades, ficheros...
 - Cambiar diseño del header.php
 - Modificar el desplegable del usuario loegado
--
 
 # Puesta en Marcha
 ## Instalacion

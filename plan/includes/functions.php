@@ -1,7 +1,7 @@
 <?php
 // functions.php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once  $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 $conn = conectar_bd();
 
 // Obtener la fecha desde la URL (formato YYYY-MM-DD)
