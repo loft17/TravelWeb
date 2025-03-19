@@ -1,46 +1,7 @@
 <?php
 // Incluir la configuración de la base de datos
-include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-include 'header.php';
-
-// Inicializar la conexión a la base de datos
-$conn = conectar_bd();
-
-// Obtener la fecha desde la URL (formato YYYY-MM-DD)
-$fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
-
-// Consulta para obtener las atracciones activas con la fecha específica
-if ($fecha) {
-    $sql = "SELECT * FROM atracciones WHERE activo = TRUE AND fecha = ? ORDER BY ciudad, orden ASC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $fecha); // El parámetro 's' es para cadenas
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $stmt->close();
-} else {
-    $sql = "SELECT * FROM atracciones WHERE activo = TRUE ORDER BY ciudad, orden ASC";
-    $result = $conn->query($sql);
-}
-
-// Función para actualizar el estado "visto" en la base de datos
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_visto') {
-    $id = intval($_POST['id']);
-    $currentVisto = $_POST['visto'] === 'true'; // Obtener el estado actual
-
-    // Cambiar el estado contrario
-    $newVisto = !$currentVisto;
-
-    // Actualizar la base de datos
-    $updateSql = "UPDATE atracciones SET visto = ? WHERE id = ?";
-    $stmt = $conn->prepare($updateSql);
-    $stmt->bind_param("ii", $newVisto, $id);
-    $stmt->execute();
-    $stmt->close();
-
-    // Devolver una respuesta JSON
-    echo json_encode(['success' => true, 'visto' => $newVisto]);
-    exit;
-}
+include 'includes/header.php';
+include 'includes/functions.php';
 ?>
 
 <body>
@@ -56,11 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     <summary>
                         <span><?php echo htmlspecialchars($row['nombre']); ?></span>
                         <!-- Usamos el id único de la atracción para el checkbox -->
-                        <input type="checkbox" id="check_<?php echo $row['id']; ?>" class="seen-checkbox">
-                        <label for="check_<?php echo $row['id']; ?>" class="seen-label">
-                            <span class="material-icons unchecked">check_circle_outline</span>
-                            <span class="material-icons checked">check_circle</span>
-                        </label>
+                        <!-- Checkbox con id único y estado según la BD -->
+                    <input type="checkbox" id="check_<?php echo $row['id']; ?>" class="seen-checkbox" <?php echo $row['visto'] ? 'checked' : ''; ?>>
+                    <label for="check_<?php echo $row['id']; ?>" class="seen-label">
+                        <!-- Único ícono que usará los estilos definidos -->
+                        <span class="check-icon material-icons <?php echo $row['visto'] ? 'checked' : ''; ?>">
+                            <?php echo $row['visto'] ? 'check_circle' : 'check_circle_outline'; ?>
+                        </span>
+                    </label>
+
                     </summary>
                     <img src="<?php echo htmlspecialchars($row['imagen_url']); ?>" alt="<?php echo htmlspecialchars($row['nombre']); ?>">
                     <?php 
@@ -102,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <?php $conn->close(); ?>
     </div>
 
-    <?php include 'footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>
     <script src="assets/scripts.js"></script>
 </body>
 

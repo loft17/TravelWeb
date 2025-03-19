@@ -261,12 +261,19 @@ details[open] summary::after {
 
 /* ... (el contenido anterior de la hoja de estilo) ... */
 
-/* Agrega esta regla para los iconos sociales */
-.social-icon {
-  color: gray;
-  font-size: 24px;
-  margin-left: 10px;
-  vertical-align: middle;
+/* Estilo para el ícono de "visto" */
+.check-icon.material-icons {
+  font-size: 1.5rem; /* Tamaño del ícono */
+  cursor: pointer; /* Indica que es interactivo */
+  transition: color 0.2s ease-in-out; /* Transición suave para el cambio de color */
 }
 
+/* Color gris cuando no está visto */
+.check-icon:not(.checked) {
+  color: #ccc; /* Gris claro */
+}
 
+/* Color verde cuando está visto */
+.check-icon.checked {
+  color: #28a745; /* Verde oscuro */
+}
