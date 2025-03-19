@@ -1,120 +1,99 @@
-<?php 
+<?php
+// Incluir la configuración de la base de datos
 include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include 'header.php';
 
-// Conectamos a la base de datos
+// Inicializar la conexión a la base de datos
 $conn = conectar_bd();
 
-// Si es una petición POST para cambiar el estado "visto", procesarla y devolver JSON sin generar salida HTML
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_visto') {
-  $id = intval($_POST['id']);
-  $currentVisto = $_POST['visto'] === 'true'; // estado actual (string "true" o "false")
-  $newVisto = !$currentVisto; // invertimos el estado
+// Obtener la fecha desde la URL (formato YYYY-MM-DD)
+$fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
 
-  // Actualizar la base de datos
-  $updateSql = "UPDATE atracciones SET visto = ? WHERE id = ?";
-  $stmt = $conn->prepare($updateSql);
-  $vistoInt = $newVisto ? 1 : 0; // convertir a entero
-  $stmt->bind_param("ii", $vistoInt, $id);
-  $stmt->execute();
-  $stmt->close();
-
-  // Devolver la respuesta JSON y finalizar la ejecución
-  echo json_encode(['success' => true, 'visto' => $newVisto]);
-  exit;
+// Consulta para obtener las atracciones activas con la fecha específica
+if ($fecha) {
+    $sql = "SELECT * FROM atracciones WHERE activo = TRUE AND fecha = ? ORDER BY ciudad, orden ASC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $fecha); // El parámetro 's' es para cadenas
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+} else {
+    $sql = "SELECT * FROM atracciones WHERE activo = TRUE ORDER BY ciudad, orden ASC";
+    $result = $conn->query($sql);
 }
 
-// Para peticiones GET se sigue con el resto de la página
-include $_SERVER['DOCUMENT_ROOT'] . '/v2/includes/head.php';
+// Función para actualizar el estado "visto" en la base de datos
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_visto') {
+    $id = intval($_POST['id']);
+    $currentVisto = $_POST['visto'] === 'true'; // Obtener el estado actual
 
-// Recuperamos la fecha pasada en la URL o usamos la fecha actual si no se especifica
-$fecha = isset($_GET['fecha']) ? $_GET['fecha'] : date('Y-m-d');
+    // Cambiar el estado contrario
+    $newVisto = !$currentVisto;
 
-// Consulta para obtener las atracciones del día
-$query = "SELECT * FROM atracciones WHERE fecha = '$fecha'";
-$result = $conn->query($query);
+    // Actualizar la base de datos
+    $updateSql = "UPDATE atracciones SET visto = ? WHERE id = ?";
+    $stmt = $conn->prepare($updateSql);
+    $stmt->bind_param("ii", $newVisto, $id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Devolver una respuesta JSON
+    echo json_encode(['success' => true, 'visto' => $newVisto]);
+    exit;
+}
 ?>
 
-<!doctype html>
-<html class="h-100" lang="en">
+<body>
 
-<head>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
+    <!-- Sección principal con fecha y entradas -->
+    <div class="content">
+        <!-- Fecha visible antes de la primera entrada -->
+        <div class="fecha"><?php echo htmlspecialchars($fecha); ?></div>
 
-<body data-bs-spy="scroll" data-bs-target="#navScroll">
-
-  <?php include 'includes/header.php'; ?>
-
-  <main>
-    <div class="w-100 overflow-hidden position-relative" id="top">
-      <div class="container py-vh-5">
-        <div class="row d-flex justify-content-center text-center">
-          <div class="col-12 col-lg-10">
-            <h1 class="display-huge mb-3">Thailandia '25</h1>
-            <h5 class="lead pt-2 py-vh-2"><?php echo htmlspecialchars($fecha); ?></h5>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="row d-flex justify-content-center">
-        <div class="col-11 col-lg-10 col-xl-6">
-          <div class="row border-bottom">
-            <div class="container py-5">
-              <div class="row">
-                <?php if($result && $result->num_rows > 0): ?>
-                  <?php while($row = $result->fetch_assoc()): ?>
-                    <article class="col-12 border-top px-0 py-4 d-flex justify-content-between align-items-center">
-                      <h2 class="h4 lh-1 mb-0">
-                        <a href="detail.php?id=<?php echo $row['id']; ?>" class="text-decoration-none">
-                          <?php echo $row['nombre']; ?>
-                        </a>
-                      </h2>
-                      <span 
-                        class="check-icon material-icons <?php echo $row['visto'] ? 'checked' : ''; ?>" 
-                        data-id="<?php echo $row['id']; ?>"
-                        onclick="toggleVisto(<?php echo $row['id']; ?>, <?php echo $row['visto'] ? 'true' : 'false'; ?>)">
-                        check_circle
-                      </span>
-                    </article>
-                  <?php endwhile; ?>
-                <?php else: ?>
-                  <p>No se encontraron atracciones para la fecha <?php echo $fecha; ?>.</p>
+        <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+        <details class="entrada">
+            <summary>
+                <span><?php echo htmlspecialchars($row['nombre']); ?></span>
+                <input type="checkbox" id="check3" class="seen-checkbox">
+                <label for="check3" class="seen-label">
+                    <span class="material-icons unchecked">check_circle_outline</span>
+                    <span class="material-icons checked">check_circle</span>
+                </label>
+            </summary>
+            <img src="<?php echo htmlspecialchars($row['imagen_url']); ?>" alt="<?php echo htmlspecialchars($row['nombre']); ?>">
+            <p><?php echo $row['descripcion']; ?></p>
+            <div class="divider"></div>
+            <p>
+                <?php if (!empty($row['mapa_url'])): ?>
+                    <span class="material-icons social-icon">location_on</span>
                 <?php endif; ?>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                <?php if (!empty($row['wikipedia_url'])): ?>
+                    <span class="material-icons social-icon">public</span>
+                <?php endif; ?>
+                <?php if (!empty($row['instagram_url_1'])): ?>
+                    <span class="material-icons social-icon">camera_alt</span>
+                <?php endif; ?>
+                <?php if (!empty($row['instagram_url_2'])): ?>
+                    <span class="material-icons social-icon">camera_alt</span>
+                <?php endif; ?>
+                <?php if (!empty($row['instagram_url_3'])): ?>
+                    <span class="material-icons social-icon">camera_alt</span>
+                <?php endif; ?>
+            </p>
+
+        </details>
+
+        <?php endwhile; ?>
+        <?php else: ?>
+        <p>No hay atracciones disponibles para la fecha seleccionada.</p>
+        <?php endif; ?>
+
+        <?php $conn->close(); ?>
     </div>
-  </main>
 
-  <?php include 'includes/footer.php'; ?>
-
-  <!-- Función JavaScript para actualizar el estado "visto" mediante fetch y recargar la página -->
-  <script>
-    function toggleVisto(id, currentVisto) {
-      fetch(window.location.href, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'action=toggle_visto&id=' + id + '&visto=' + currentVisto
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Recargamos la página para reflejar el cambio
-          window.location.reload();
-        } else {
-          console.error('Error al actualizar el estado.');
-        }
-      })
-      .catch(error => console.error('Error:', error));
-    }
-  </script>
-
+    <?php include 'footer.php'; ?>
+    <script src="assets/scripts.js"></script>
 </body>
 
 </html>

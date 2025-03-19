@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Sitio Minimalista</title>
+  <!-- Google Fonts: Gidole -->
+  <link href="https://fonts.googleapis.com/css2?family=Gidole&display=swap" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <!-- Checkbox para controlar el menú -->
+  <input type="checkbox" id="menu-toggle">
+  <header>
+    <div class="titulo">Mi Sitio</div>
+    <label for="menu-toggle" class="menu-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+  </header>
+  
+  <!-- Menú de pantalla completa con nuevo diseño -->
+  <div class="menu-overlay">
+    <div class="menu-header">
+      <!-- Etiqueta para cerrar el menú -->
+      <label for="menu-toggle" class="close-btn">Cerrar</label>
+    </div>
+    <nav>
+      <a href="#">Inicio</a>
+      <a href="#">Acerca</a>
+      <a href="#">Entradas</a>
+      <a href="#">Contacto</a>
+    </nav>
+  </div>
+  
+  <!-- Sección principal con fecha y entradas -->
+  <div class="content">
+    <!-- Fecha visible antes de la primera entrada -->
+    <div class="fecha">
+      12 de Marzo de 2025
+    </div>
+    
+    <!-- Entrada 1 -->
+    <details class="entrada">
+      <summary>
+        <span>Título de la entrada 1</span>
+        <!-- Checkbox oculto y label con Material Icons -->
+        <input type="checkbox" id="check1" class="seen-checkbox">
+        <label for="check1" class="seen-label">
+          <span class="material-icons unchecked">check_circle_outline</span>
+          <span class="material-icons checked">check_circle</span>
+        </label>
+      </summary>
+      <!-- Contenido de la entrada -->
+      <img src="images.jpg" alt="Imagen de entrada 1">
+      <p>Línea 2 de texto explicativo para la entrada 1.</p>
+      <div class="divider"></div>
+      <p>asd asdas asdasd adasd as</p>
+    </details>
+    
+    <!-- Entrada 2 -->
+    <details class="entrada">
+      <summary>
+        <span>Título de la entrada 2</span>
+        <input type="checkbox" id="check2" class="seen-checkbox">
+        <label for="check2" class="seen-label">
+          <span class="material-icons unchecked">check_circle_outline</span>
+          <span class="material-icons checked">check_circle</span>
+        </label>
+      </summary>
+      <img src="images.jpg" alt="Imagen de entrada 2">
+      <p>Línea 2 de texto explicativo para la entrada 2.</p>
+      <div class="divider"></div>
+      <p>asd asdas asdasd adasd as</p>
+    </details>
+    
+    <!-- Entrada 3 -->
+    <details class="entrada">
+      <summary>
+        <span>Título de la entrada 3</span>
+        <input type="checkbox" id="check3" class="seen-checkbox">
+        <label for="check3" class="seen-label">
+          <span class="material-icons unchecked">check_circle_outline</span>
+          <span class="material-icons checked">check_circle</span>
+        </label>
+      </summary>
+      <img src="images.jpg" alt="Imagen de entrada 3">
+      <p>Línea 2 de texto explicativo para la entrada 3.</p>
+      <div class="divider"></div>
+      <p>asd asdas asdasd adasd as</p>
+    </details>
+  </div>
+  
+
+
+  <!-- Script para que solo un <details> esté abierto a la vez -->
+  <script>
+    document.querySelectorAll('details').forEach((targetDetail) => {
+      targetDetail.addEventListener("toggle", (event) => {
+        if (targetDetail.open) {
+          document.querySelectorAll('details').forEach((detail) => {
+            if (detail !== targetDetail) {
+              detail.removeAttribute("open");
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

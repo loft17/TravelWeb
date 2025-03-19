@@ -1,0 +1,260 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: 70px; /* Evita que el contenido quede oculto por el header */
+}
+
+body {
+  font-family: 'Gidole', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header fijo con sombra */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 1002;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.titulo {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Checkbox oculto para controlar el menú */
+#menu-toggle {
+  display: none;
+}
+
+/* Botón de menú (ícono hamburguesa) */
+.menu-btn {
+  cursor: pointer;
+  width: 30px;
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menu-btn span {
+  display: block;
+  height: 3px;
+  background-color: #333;
+  border-radius: 3px;
+}
+
+/* Menú overlay */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+#menu-toggle:checked ~ .menu-overlay {
+  transform: translateY(0);
+}
+
+/* Header interno del menú con sombra */
+.menu-overlay .menu-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 15px;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.menu-overlay .close-btn {
+  font-size: 1.2em;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #333;
+}
+
+/* Contenedor del menú */
+.menu-overlay nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-overlay nav a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1.8em;
+  margin: 15px 0;
+}
+
+/* Contenido principal (común para ambos diseños) */
+.content {
+  padding-top: 70px; /* Para no quedar tapado por el header */
+  padding: 20px;
+  margin-bottom: 60px; /* Espacio para el footer */
+}
+
+/* Sección de la fecha antes de las entradas */
+    .fecha {
+      text-align: center;
+      font-size: 1em;
+      color: #555;
+      margin-top: 60px; /* Aumenta este valor si quieres bajar más la fecha */
+      margin-bottom: 20px;
+    }
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  color: #777;
+  z-index: 1002;
+}
+
+/* ===============================
+   Estilos para la lista de entradas (index)
+   =============================== */
+
+/* Contenedor de cada entrada colapsable */
+.entrada {
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+/* Estilo del summary en las entradas */
+.entrada summary {
+  list-style: none;
+  padding: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1em;
+  position: relative;
+}
+
+
+
+/* Ocultar línea cuando la entrada está abierta */
+details[open] summary::after {
+  display: none;
+}
+
+/* Material Icons para el check */
+.material-icons {
+  font-size: 24px;
+}
+
+/* Estilos para el checkbox con Material Icons */
+.seen-label {
+  cursor: pointer;
+}
+
+.seen-label .checked {
+  display: none;
+}
+
+.seen-checkbox:checked + .seen-label .unchecked {
+  display: none;
+}
+
+.seen-checkbox:checked + .seen-label .checked {
+  display: inline;
+}
+
+/* Ocultar checkbox real */
+.seen-checkbox {
+  display: none;
+}
+
+/* Divider parcial */
+.divider {
+  width: 80%;
+  height: 1px;
+  background: #ddd;
+  margin: 10px auto;
+}
+
+/* Imagen y párrafos en las entradas */
+.entrada img {
+  width: 100%;
+  display: block;
+}
+
+.entrada p {
+  padding: 10px 15px;
+  margin: 0;
+}
+
+/* ===============================
+   Estilos para la entrada completa (blog post)
+   =============================== */
+
+.post {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.post img {
+  width: 100%;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.post p {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.post .divider {
+  width: 80%;
+  height: 1px;
+  background: #ddd;
+  margin: 20px auto;
+}
