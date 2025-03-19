@@ -54,7 +54,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php
                                     <!-- Editor Quill para la descripción -->
                                     <div class="form-group row">
                                         <div class="col-sm-12">
-                                        <label for="descripcion">Descripción:</label>
+                                            <label for="descripcion">Descripción:</label>
                                             <div id="editor-container" style="height: 200px;"></div>
                                             <input type="hidden" name="descripcion" id="descripcion">                                       
                                         </div>
@@ -101,9 +101,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php
                                         <div class="form-group form-check">
                                             <input type="checkbox" class="form-check-input" name="visto" id="visto">
                                             <label class="form-check-label" for="visto">Visto</label>
-
                                             <br>
-
                                             <input type="checkbox" class="form-check-input" name="activo" id="activo" checked>
                                             <label class="form-check-label" for="activo">Activo</label>
                                         </div>
@@ -116,6 +114,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php
                                         </div>
                                     </div>
                                     
+                                    <!-- Botón para guardar la atracción -->
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btn-primary">Guardar Atracción</button>
+                                        </div>
+                                    </div>
                                 </form>
                             </div><!-- card-body -->
                         </div><!-- card -->

@@ -23,8 +23,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
                 </h4>
 
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Log Out</a>
+                    <a class="dropdown-item" href="/admin/includes/auth/logout.php">Log Out</a>
                 </div>
             </div>
         </div>

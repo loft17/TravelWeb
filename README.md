@@ -1,7 +1,9 @@
 # Pendientes:
 - Notificaciones al editar comida, atracciones, utilidades, ficheros...
 - Cambiar diseño del header.php
-- Modificar el desplegable del usuario loegado
+- Modificar el desplegable del usuario loegado para poder editar sus opciones
+- Crear la pagina de la entrada.
+- Revisar el fichero install.php
 
 # Puesta en Marcha
 ## Instalacion

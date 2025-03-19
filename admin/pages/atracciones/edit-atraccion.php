@@ -118,7 +118,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/edit_atraccion.ph
                                     </div>
                                     
                                     <button type="submit" class="btn btn-primary">Actualizar</button>
-                                    <a href="show-atracciones.php" class="btn btn-secondary">Cancelar</a>
+                                    <a href="show-atraccions.php" class="btn btn-secondary">Cancelar</a>
                                 </form>
                             </div><!-- card-body -->
                         </div><!-- card -->

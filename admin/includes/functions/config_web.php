@@ -19,8 +19,12 @@ function process_config_web() {
     // Definimos los campos a editar: clave de la tabla => etiqueta a mostrar.
     $fields = [
         'title_web'   => 'Título',
+        'destination' => 'Destino',
+        'date_start' => 'Fecha Salida',
+        'date_finish' => 'Fecha llegada',
         'footer_text' => 'Pie de Página'
     ];
+
 
     // Inicializamos la variable de notificación.
     $notification = '';
