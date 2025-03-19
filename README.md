@@ -1,7 +1,10 @@
 # Pendientes:
 - TAREAS, que se vea mas parecido al resto de paginas como la de emojis.php, maleta.php
 - Notificaciones al editar comida, atracciones
-
+- Ver platos, usuarios tenga el mismo diseño que la de ver atracciones
+- Cambiar diseño del header.php
+- Modificar el desplegable del usuario loegado
+-
 
 # Puesta en Marcha
 ## Instalacion
@@ -9,13 +12,13 @@
 git clone https://github.com/loft17/TravelGuide.git
 ```
 
-Requisitos:
+## Requisitos:
+```
 apt install php-mbstring
+```
 
 
 ## Configuración
-
-
 ### Creamos la base de datos y damos permisos:
 Nos conectamos a la base de datos para crear el usuario y la tabla:
 ```

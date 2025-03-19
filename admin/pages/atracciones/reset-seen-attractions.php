@@ -61,9 +61,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
             <div id="copyNotification" style="display: none;" class="alert"></div>
         </div>
         <!-- main content area end -->
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
     </div>
     <!-- page container area end -->
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
 </body>
 </html>
