@@ -8,14 +8,14 @@ $conn = conectar_bd();
 $fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
 
 if ($fecha) {
-    $sql = "SELECT * FROM atracciones WHERE activo = TRUE AND fecha = ? ORDER BY ciudad, orden ASC";
+    $sql = "SELECT * FROM atracciones WHERE activo = TRUE AND fecha = ? ORDER BY orden, orden DESC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $fecha);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
 } else {
-    $sql = "SELECT * FROM atracciones WHERE activo = TRUE ORDER BY ciudad, orden ASC";
+    $sql = "SELECT * FROM atracciones WHERE activo = TRUE ORDER BY orden, orden DESC";
     $result = $conn->query($sql);
 }
 

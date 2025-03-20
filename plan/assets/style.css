@@ -277,3 +277,17 @@ details[open] summary::after {
 .check-icon.checked {
   color: #28a745; /* Verde oscuro */
 }
+
+.entrada-text {
+  text-align: justify;
+}
+
+.iconos a i {
+  color: #333;
+  margin-top: 5px;
+}
+
+.iconos a {
+  margin-right: 15px;
+}
+
