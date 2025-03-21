@@ -21,13 +21,11 @@ $result = $stmt->get_result();
 
 <body>
     <!-- Sección principal con fecha y entradas -->
-    </br></br></br>
+    <br><br><br>
     <div class="content">
         <?php
-        // Comprobar si se encontró alguna entrada
         if ($result->num_rows > 0) {
             $entrada = $result->fetch_assoc();
-            // Contenedor con la clase que alinea el texto en justificar
             echo '<div class="entrada-text">';
                 // Mostrar la imagen principal si existe
                 if (!empty($entrada['imagen_url'])) {
@@ -55,8 +53,21 @@ $result = $stmt->get_result();
                     }
                 echo '</div>';
 
-                echo "</br>";
-                // Mostrar la descripción sin escapar, para que el HTML de Quill se renderice
+                echo "<br>";
+
+                // Mostrar el checkbox para el estado "visto"
+                echo '<div class="visto-status">';
+                    echo '<label for="check_' . htmlspecialchars($entrada['id']) . '">Visto: </label>';
+                    echo '<input type="checkbox" class="seen-checkbox" id="check_' . htmlspecialchars($entrada['id']) . '" data-id="' . htmlspecialchars($entrada['id']) . '" ' . ($entrada['visto'] ? 'checked' : '') . '>';
+                    // Label para mostrar el ícono asociado al checkbox
+                    echo '<label for="check_' . htmlspecialchars($entrada['id']) . '"><i class="material-icons check-icon">';
+                        echo $entrada['visto'] ? 'check_circle' : 'check_circle_outline';
+                    echo '</i></label>';
+                echo '</div>';
+
+                echo "<br>";
+
+                // Mostrar la descripción sin escapar para que se renderice el HTML (por ejemplo, de Quill)
                 echo "<div>" . $entrada['descripcion'] . "</div>";                
             echo '</div>';
         } else {
@@ -67,5 +78,8 @@ $result = $stmt->get_result();
     </div>
 
     <?php include 'includes/footer.php'; ?>
+
+    <!-- Script para actualizar el estado "visto" vía AJAX utilizando tu código -->
+    <script src="assets/scripts.js"></script>
 </body>
 </html>
