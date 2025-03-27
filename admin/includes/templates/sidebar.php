@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 $activePage = basename($_SERVER['SCRIPT_FILENAME'], '.php');
 
 // Definir los arrays de páginas para cada grupo del menú
-$atraccionesPages = ['add-atraccion', 'show-atraccions', 'reset-seen-attractions', 'reset-active-attractions'];
+$atraccionesPages = ['add-atraccion', 'show-atraccions', 'planning','reset-seen-attractions', 'reset-active-attractions'];
 $platosPages      = ['add-food', 'show-foods', 'change-food'];
 $utilidadesPages  = ['task', 'maleta', 'emojis'];
 $ficherosPages    = ['show-imgs', 'upload-imgs'];
@@ -45,6 +45,9 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                             </li>
                             <li class="<?php echo ($activePage == 'show-atraccions') ? 'active' : '';?>">
                                 <a href="/admin/pages/atracciones/show-atraccions.php">Ver Atracciones</a>
+                            </li>
+                            <li class="<?php echo ($activePage == 'planning') ? 'active' : '';?>">
+                                <a href="/admin/pages/atracciones/planning.php">Calendario</a>
                             </li>
                             <li class="<?php echo ($activePage == 'reset-seen-attractions') ? 'active' : '';?>">
                                 <a href="/admin/pages/atracciones/reset-seen-attractions.php">

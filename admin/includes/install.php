@@ -88,6 +88,17 @@ CREATE TABLE tareas (
     fecha_terminada timestamp DEFAULT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE calendar_events (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    fecha date NOT NULL,
+    ciudad varchar(100) DEFAULT NULL,
+    visita_manana TEXT,
+    visita_tarde TEXT,
+    visita_noche TEXT,
+    PRIMARY KEY (id),
+    UNIQUE KEY (fecha)
+);
 ";
 
 if (!$conn->multi_query($sql)) {

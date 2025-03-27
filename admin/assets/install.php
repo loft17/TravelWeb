@@ -62,6 +62,15 @@ CREATE TABLE IF NOT EXISTS comida (
     comido TINYINT(1) NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS calendar_events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL UNIQUE,
+    ciudad VARCHAR(100) DEFAULT NULL,
+    visita_manana VARCHAR(255) DEFAULT NULL,
+    visita_tarde VARCHAR(255) DEFAULT NULL,
+    visita_noche VARCHAR(255) DEFAULT NULL
+);
 ";
 
 if (!$conn->multi_query($sql)) {
