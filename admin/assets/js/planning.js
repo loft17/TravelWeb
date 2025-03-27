@@ -20,6 +20,24 @@ $(document).ready(function(){
         modules: { toolbar: toolbarOptions },
         theme: 'snow'
     });
+
+        // Función para limitar el número de caracteres (sin contar etiquetas) a 160.
+        function enforceMaxLength(quill, maxLength) {
+            quill.on('text-change', function(delta, oldDelta, source) {
+                var text = quill.getText().trim(); // Obtiene solo el texto sin HTML.
+                if(text.length > maxLength) {
+                    // Elimina el exceso de texto.
+                    quill.deleteText(maxLength, text.length);
+                }
+            });
+        }
+        
+        // Aplicar la función de límite a cada editor.
+        enforceMaxLength(quillCiudad, 100);
+        enforceMaxLength(quillVisitaManana, 160);
+        enforceMaxLength(quillVisitaTarde, 160);
+        enforceMaxLength(quillVisitaNoche, 160);
+
     
     // Al hacer clic en una celda del calendario, rellenar el modal con los datos almacenados en data-*.
     $("table.table td").on("click", function(){
