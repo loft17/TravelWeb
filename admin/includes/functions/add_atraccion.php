@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sisssssssssii", $ciudad, $orden, $fecha, $nombre, $descripcion, $imagen_url, $mapa_url, $wikipedia_url, $instagram_url_1, $instagram_url_2, $instagram_url_3, $visto, $activo);
     
     if ($stmt->execute()) {
-        header("Location: show-atracciones.php");
+        header("Location: show-atraccions.php");
         exit;
     } else {
         $error = "Error al agregar registro: " . $stmt->error;

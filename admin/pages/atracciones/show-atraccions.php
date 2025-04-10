@@ -124,7 +124,7 @@ $atracciones = getAtracciones();
                                                             <a href="edit-atraccion.php?id=<?php echo $row['id']; ?>" class="btn btn-primary btn-sm">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
-                                                            <a href="borrar_atraccion.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este registro?')">
+                                                            <a href="/admin/includes/functions/delete-atraccion.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este registro?')">
                                                                 <i class="fa-solid fa-trash"></i>
                                                             </a>
                                                         </td>
