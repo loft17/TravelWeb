@@ -34,166 +34,154 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
         </div>
     </div>
     <!-- Selector de viaje -->
-    <div style="padding:10px 16px 8px; border-bottom:1px solid rgba(255,255,255,0.1);">
-        <div style="font-size:10px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:3px;">Viaje activo</div>
-        <div class="dropdown">
-            <button class="btn btn-sm btn-outline-light w-100 text-left dropdown-toggle" type="button" data-toggle="dropdown" style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                ✈ <?= htmlspecialchars($viajeActualNombre) ?>
-            </button>
-            <div class="dropdown-menu" style="min-width:200px;">
+    <div class="sidebar-viaje-selector">
+        <span class="sidebar-viaje-label">Viaje activo</span>
+        <div class="sidebar-viaje-select-wrap">
+            <i class="fa fa-map-marked-alt sidebar-viaje-icon"></i>
+            <select class="sidebar-viaje-select"
+                    onchange="if(this.value) window.location='/admin/switch-viaje.php?id='+this.value">
                 <?php foreach ($todosLosViajes as $v): ?>
-                <a class="dropdown-item <?= (int)$v['id'] === $viajeActivoId ? 'active' : '' ?>"
-                   href="/admin/switch-viaje.php?id=<?= (int)$v['id'] ?>">
+                <option value="<?= (int)$v['id'] ?>" <?= (int)$v['id'] === $viajeActivoId ? 'selected' : '' ?>>
                     <?= htmlspecialchars($v['nombre']) ?>
-                    <?php if ((int)$v['id'] === $viajeActivoId): ?> ✓<?php endif; ?>
-                </a>
+                </option>
                 <?php endforeach; ?>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/admin/pages/adm/viajes.php">
-                    <i class="fa fa-plus"></i> Gestionar viajes
-                </a>
-            </div>
+            </select>
+            <i class="fa fa-chevron-down sidebar-viaje-chevron"></i>
         </div>
+        <a href="/admin/pages/adm/viajes.php" class="sidebar-viaje-manage">
+            <i class="fa fa-plus"></i> Gestionar viajes
+        </a>
     </div>
     <div class="main-menu">
         <div class="menu-inner">
             <nav>
                 <ul class="metismenu" id="menu">
 
-                    <!-- Menú Atracciones -->
-                    <li class="<?php echo $atraccionesActive; ?>">
-                        <a href="javascript:void(0)" aria-expanded="true">
-                            <i class="fa fa-cutlery"></i>
+                    <!-- VIAJE -->
+                    <div class="nav-label">Viaje</div>
+
+                    <li class="<?= $atraccionesActive ?>">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-map-marker-alt"></i>
                             <span>Atracciones</span>
                         </a>
-                        <ul class="<?php echo $atraccionesActive; ?>">
-                            <li class="<?php echo ($activePage == 'add-atraccion') ? 'active' : '';?>">
-                                <a href="/admin/pages/atracciones/add-atraccion.php">Nueva atracción</a>
+                        <ul class="<?= $atraccionesActive ?>">
+                            <li class="<?= $activePage=='add-atraccion'?'active':'' ?>">
+                                <a href="/admin/pages/atracciones/add-atraccion.php">+ Nueva atracción</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'show-atraccions') ? 'active' : '';?>">
-                                <a href="/admin/pages/atracciones/show-atraccions.php">Ver Atracciones</a>
+                            <li class="<?= $activePage=='show-atraccions'?'active':'' ?>">
+                                <a href="/admin/pages/atracciones/show-atraccions.php">Ver todas</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'planning') ? 'active' : '';?>">
-                                <a href="/admin/pages/atracciones/planning.php">Calendario</a>
-                            </li>
-                            <li class="<?php echo ($activePage == 'mapa') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='mapa'?'active':'' ?>">
                                 <a href="/admin/pages/atracciones/mapa.php">Mapa</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'reset-seen-attractions') ? 'active' : '';?>">
-                                <a href="/admin/pages/atracciones/reset-seen-attractions.php">
-                                    Marcar atracciones:<br>No Visto
-                                </a>
+                            <li class="<?= $activePage=='planning'?'active':'' ?>">
+                                <a href="/admin/pages/atracciones/planning.php">Calendario</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'reset-active-attractions') ? 'active' : '';?>">
-                                <a href="/admin/pages/atracciones/reset-active-attractions.php">
-                                    Marcar atracciones:<br>Activado
-                                </a>
+                            <li class="<?= $activePage=='reset-seen-attractions'?'active':'' ?>">
+                                <a href="/admin/pages/atracciones/reset-seen-attractions.php">Reset vistas</a>
+                            </li>
+                            <li class="<?= $activePage=='reset-active-attractions'?'active':'' ?>">
+                                <a href="/admin/pages/atracciones/reset-active-attractions.php">Reset activas</a>
                             </li>
                         </ul>
                     </li>
 
-                    <!-- Menú Platos -->
-                    <li class="<?php echo $platosActive; ?>">
-                        <a href="javascript:void(0)" aria-expanded="true">
-                            <i class="fa fa-cutlery"></i>
-                            <span>Platos</span>
+                    <li class="<?= $platosActive ?>">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-utensils"></i>
+                            <span>Comida</span>
                         </a>
-                        <ul class="<?php echo $platosActive; ?>">
-                            <li class="<?php echo ($activePage == 'add-food') ? 'active' : '';?>">
-                                <a href="/admin/pages/comida/add-food.php">Nuevo plato</a>
+                        <ul class="<?= $platosActive ?>">
+                            <li class="<?= $activePage=='add-food'?'active':'' ?>">
+                                <a href="/admin/pages/comida/add-food.php">+ Nuevo plato</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'show-foods') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='show-foods'?'active':'' ?>">
                                 <a href="/admin/pages/comida/show-foods.php">Ver platos</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'change-food') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='change-food'?'active':'' ?>">
                                 <a href="/admin/pages/comida/change-food.php">Cambiar estado</a>
                             </li>
                         </ul>
                     </li>
 
-                    <!-- Menú Utilidades -->
-                    <li class="<?php echo $utilidadesActive; ?>">
-                        <a href="javascript:void(0)" aria-expanded="true">
-                            <i class="fa fa-wrench"></i>
+                    <!-- PLANNING -->
+                    <div class="nav-label">Planificación</div>
+
+                    <li class="<?= $utilidadesActive ?>">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-toolbox"></i>
                             <span>Utilidades</span>
                         </a>
-                        <ul class="<?php echo $utilidadesActive; ?>">
-                            <li class="<?php echo ($activePage == 'task') ? 'active' : '';?>">
+                        <ul class="<?= $utilidadesActive ?>">
+                            <li class="<?= $activePage=='task'?'active':'' ?>">
                                 <a href="/admin/pages/tools/task.php">Tareas</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'maleta') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='maleta'?'active':'' ?>">
                                 <a href="/admin/pages/tools/maleta.php">Maleta</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'emojis') ? 'active' : '';?>">
-                                <a href="/admin/pages/tools/emojis.php">Emojis</a>
-                            </li>
-                            <li class="<?php echo ($activePage == 'gastos') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='gastos'?'active':'' ?>">
                                 <a href="/admin/pages/tools/gastos.php">Gastos</a>
                             </li>
+                            <li class="<?= $activePage=='emojis'?'active':'' ?>">
+                                <a href="/admin/pages/tools/emojis.php">Emojis</a>
+                            </li>
                         </ul>
                     </li>
 
-                    <!-- Menú Ficheros -->
-                    <li class="<?php echo $ficherosActive; ?>">
-                        <a href="javascript:void(0)" aria-expanded="true">
-                            <i class="fa fa-folder"></i>
+                    <!-- SISTEMA -->
+                    <div class="nav-label">Sistema</div>
+
+                    <li class="<?= $ficherosActive ?>">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-images"></i>
                             <span>Ficheros</span>
                         </a>
-                        <ul class="<?php echo $ficherosActive; ?>">
-                            <li class="<?php echo ($activePage == 'show-imgs') ? 'active' : '';?>">
-                                <a href="/admin/pages/files/show-imgs.php">Imagenes</a>
+                        <ul class="<?= $ficherosActive ?>">
+                            <li class="<?= $activePage=='show-imgs'?'active':'' ?>">
+                                <a href="/admin/pages/files/show-imgs.php">Galería</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'upload-imgs') ? 'active' : '';?>">
-                                <a href="/admin/pages/files/upload-imgs.php">Subir</a>
+                            <li class="<?= $activePage=='upload-imgs'?'active':'' ?>">
+                                <a href="/admin/pages/files/upload-imgs.php">Subir imagen</a>
                             </li>
                         </ul>
                     </li>
 
-                    <!-- Menú Base de datos -->
-                    <li class="<?php echo $bbddActive; ?>">
-                        <a href="javascript:void(0)" aria-expanded="true">
+                    <li class="<?= $bbddActive ?>">
+                        <a href="javascript:void(0)">
                             <i class="fa fa-database"></i>
                             <span>Base de datos</span>
                         </a>
-                        <ul class="<?php echo $bbddActive; ?>">
-                            <li class="<?php echo ($activePage == 'export-json') ? 'active' : '';?>">
+                        <ul class="<?= $bbddActive ?>">
+                            <li class="<?= $activePage=='export-json'?'active':'' ?>">
                                 <a href="/admin/pages/bbdd/export-json.php">Export JSON</a>
                             </li>
-                            <li class="<?php echo ($activePage == 'export-sql') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='export-sql'?'active':'' ?>">
                                 <a href="/admin/pages/bbdd/export-sql.php">Export SQL</a>
                             </li>
                         </ul>
                     </li>
 
-                    <!-- Menú Administración -->
-                    <li class="<?php echo $administracionActive; ?>">
-                        <a href="javascript:void(0)" aria-expanded="true">
-                            <i class="fa fa-cogs"></i>
+                    <li class="<?= $administracionActive ?>">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-sliders-h"></i>
                             <span>Administración</span>
                         </a>
-                        <ul class="<?php echo $administracionActive; ?>">
-                            <li class="<?php echo ($activePage == 'show-users') ? 'active' : '';?>">
-                                <a href="/admin/pages/adm/show-users.php">Usuarios</a>
+                        <ul class="<?= $administracionActive ?>">
+                            <li class="<?= $activePage=='viajes'?'active':'' ?>">
+                                <a href="/admin/pages/adm/viajes.php">Gestionar Viajes</a>
                             </li>
-                        </ul>
-                        <ul class="<?php echo $administracionActive; ?>">
-                            <li class="<?php echo ($activePage == 'webconfig') ? 'active' : '';?>">
+                            <li class="<?= $activePage=='webconfig'?'active':'' ?>">
                                 <a href="/admin/pages/adm/webconfig.php">Configuración</a>
                             </li>
-                        </ul>
-                        <ul class="<?php echo $administracionActive; ?>">
-                            <li class="<?php echo ($activePage == 'activity-log') ? 'active' : '';?>">
-                                <a href="/admin/pages/adm/activity-log.php">Log de Actividad</a>
+                            <li class="<?= $activePage=='show-users'?'active':'' ?>">
+                                <a href="/admin/pages/adm/show-users.php">Usuarios</a>
                             </li>
-                        </ul>
-                        <ul class="<?php echo $administracionActive; ?>">
-                            <li class="<?php echo ($activePage == 'sessions') ? 'active' : '';?>">
-                                <a href="/admin/pages/adm/sessions.php">Sesiones Activas</a>
+                            <li class="<?= $activePage=='activity-log'?'active':'' ?>">
+                                <a href="/admin/pages/adm/activity-log.php">Log actividad</a>
                             </li>
-                        </ul>
-                        <ul class="<?php echo $administracionActive; ?>">
-                            <li class="<?php echo ($activePage == 'viajes') ? 'active' : '';?>">
-                                <a href="/admin/pages/adm/viajes.php">Gestionar Viajes</a>
+                            <li class="<?= $activePage=='sessions'?'active':'' ?>">
+                                <a href="/admin/pages/adm/sessions.php">Sesiones activas</a>
                             </li>
                         </ul>
                     </li>

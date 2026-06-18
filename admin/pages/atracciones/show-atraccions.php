@@ -17,6 +17,19 @@ $atracciones = getAtracciones($_SESSION['viaje_id'] ?? 0);
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <!-- CSS adicional para jQuery UI (drag & drop) -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        /* Quitar PNG de DataTables y reemplazar con indicadores CSS */
+        table.dataTable thead th.sorting,
+        table.dataTable thead th.sorting_asc,
+        table.dataTable thead th.sorting_desc,
+        table.dataTable thead th.sorting_asc_disabled,
+        table.dataTable thead th.sorting_desc_disabled { background-image: none !important; }
+        table.dataTable thead th.sorting::after       { content: ' ⇅'; opacity: .35; font-size: 10px; }
+        table.dataTable thead th.sorting_asc::after   { content: ' ↑'; opacity: .85; font-size: 10px; }
+        table.dataTable thead th.sorting_desc::after  { content: ' ↓'; opacity: .85; font-size: 10px; }
+        /* Cabeceras */
+        table.dataTable thead th { background: #f4f4f5 !important; color: #18181b !important; }
+    </style>
 </head>
 <body>
     <!-- page container area start -->
