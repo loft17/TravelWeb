@@ -1,4 +1,5 @@
 <?php
+include 'includes/protect.php';
 include 'includes/header.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 

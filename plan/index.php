@@ -1,5 +1,5 @@
 <?php
-// Incluir la configuración de la base de datos
+include 'includes/protect.php';
 include 'includes/header.php';
 include 'includes/functions.php';
 ?>
@@ -9,7 +9,7 @@ include 'includes/functions.php';
     <!-- Sección principal con fecha y entradas -->
     <div class="content">
         <!-- Fecha visible antes de la primera entrada -->
-        <div class="fecha"><?php echo htmlspecialchars($fecha); ?></div>
+        <div class="fecha"><?php echo date('d/m/Y', strtotime($fecha)); ?></div>
 
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
@@ -61,7 +61,7 @@ include 'includes/functions.php';
                 </details>
             <?php endwhile; ?>
         <?php else: ?>
-            <p>No hay atracciones disponibles para la fecha seleccionada.</p>
+            <p>No hay atracciones programadas para hoy.</p>
         <?php endif; ?>
 
         <?php $conn->close(); ?>

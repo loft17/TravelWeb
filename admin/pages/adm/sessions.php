@@ -4,8 +4,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/session_manager.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
 
-$userId = (int)$_SESSION['user_id'];
-$flash  = '';
+$myUserId     = (int)$_SESSION['user_id'];
+$flash        = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -13,25 +13,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($accion === 'revocar') {
         $sid = intval($_POST['session_id'] ?? 0);
-        if (destroy_session_by_id($sid, $userId)) {
+        if (destroy_session_by_id_any($sid)) {
             log_activity('session_revoked', "Sesión ID: $sid");
             $flash = 'Sesión cerrada correctamente.';
         }
-    } elseif ($accion === 'revocar_otras') {
+    } elseif ($accion === 'revocar_todas_excepto') {
         $currentToken = $_SESSION['session_token'] ?? '';
         $conn = conectar_bd();
-        $stmt = $conn->prepare("DELETE FROM user_sessions WHERE user_id = ? AND session_token != ?");
-        $stmt->bind_param('is', $userId, $currentToken);
+        $stmt = $conn->prepare("DELETE FROM user_sessions WHERE session_token != ?");
+        $stmt->bind_param('s', $currentToken);
         $stmt->execute();
         $deleted = $stmt->affected_rows;
         $stmt->close();
         $conn->close();
-        log_activity('sessions_revoked_others', "Sesiones cerradas: $deleted");
-        $flash = "Se han cerrado $deleted sesión(es) adicional(es).";
+        log_activity('sessions_revoked_all', "Sesiones cerradas: $deleted");
+        $flash = "Se han cerrado $deleted sesión(es).";
     }
 }
 
-$sessions     = get_active_sessions($userId);
+$sessions     = get_all_active_sessions();
 $currentToken = $_SESSION['session_token'] ?? '';
 
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
@@ -61,10 +61,10 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                 <?php if (count($sessions) > 1): ?>
                                 <form method="post">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
-                                    <input type="hidden" name="accion" value="revocar_otras">
+                                    <input type="hidden" name="accion" value="revocar_todas_excepto">
                                     <button type="submit" class="btn btn-warning btn-sm"
-                                        data-confirm="¿Cerrar todas las sesiones excepto la actual?">
-                                        <i class="fa fa-sign-out"></i> Cerrar otras sesiones
+                                        data-confirm="¿Cerrar todas las sesiones excepto la tuya?">
+                                        <i class="fa fa-sign-out-alt"></i> Cerrar todas excepto la mía
                                     </button>
                                 </form>
                                 <?php endif; ?>
@@ -79,8 +79,10 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                             <?php else: ?>
                             <div class="table-responsive">
                                 <table class="table table-hover">
-                                    <thead class="bg-dark text-white text-uppercase">
+                                    <thead class="text-uppercase">
                                         <tr>
+                                            <th>Usuario</th>
+                                            <th>Rol</th>
                                             <th>IP</th>
                                             <th>Navegador / Dispositivo</th>
                                             <th>Inicio</th>
@@ -92,11 +94,21 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                     <?php foreach ($sessions as $s): ?>
                                         <?php $isCurrent = ($s['session_token'] === $currentToken); ?>
                                         <tr class="<?= $isCurrent ? 'table-success' : '' ?>">
-                                            <td><?= htmlspecialchars($s['ip'] ?? '—') ?></td>
                                             <td>
-                                                <small><?= htmlspecialchars(substr($s['user_agent'] ?? '—', 0, 80)) ?></small>
+                                                <div style="font-weight:500;font-size:13px;"><?= htmlspecialchars($s['user_name'] ?? '—') ?></div>
+                                                <small style="color:var(--muted-fg);"><?= htmlspecialchars($s['user_email'] ?? '') ?></small>
+                                            </td>
+                                            <td>
+                                                <?php $rol = $s['user_rol'] ?? '—'; ?>
+                                                <span class="badge <?= $rol === 'admin' ? 'badge-danger' : 'badge-secondary' ?>">
+                                                    <?= htmlspecialchars($rol) ?>
+                                                </span>
+                                            </td>
+                                            <td><small><?= htmlspecialchars($s['ip'] ?? '—') ?></small></td>
+                                            <td>
+                                                <small><?= htmlspecialchars(substr($s['user_agent'] ?? '—', 0, 70)) ?></small>
                                                 <?php if ($isCurrent): ?>
-                                                    <span class="badge badge-success ml-1">Sesión actual</span>
+                                                    <span class="badge badge-success ml-1">Tu sesión</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td><small><?= htmlspecialchars($s['created_at']) ?></small></td>
@@ -107,8 +119,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                                     <input type="hidden" name="accion" value="revocar">
                                                     <input type="hidden" name="session_id" value="<?= intval($s['id']) ?>">
                                                     <button type="submit" class="btn btn-danger btn-sm"
-                                                        data-confirm="<?= $isCurrent ? '¿Cerrar la sesión actual? Te desconectarás.' : '¿Cerrar esta sesión?' ?>">
-                                                        <i class="fa fa-times"></i> <?= $isCurrent ? 'Cerrar sesión' : 'Revocar' ?>
+                                                        data-confirm="<?= $isCurrent ? '¿Cerrar tu sesión? Te desconectarás.' : '¿Cerrar esta sesión?' ?>">
+                                                        <i class="fa fa-times"></i>
                                                     </button>
                                                 </form>
                                             </td>

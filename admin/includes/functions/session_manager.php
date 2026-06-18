@@ -101,3 +101,31 @@ function get_active_sessions(int $userId): array
     $conn->close();
     return $sessions;
 }
+
+function get_all_active_sessions(): array
+{
+    _ensure_sessions_table();
+    $conn   = conectar_bd();
+    $result = $conn->query("
+        SELECT s.id, s.ip, s.user_agent, s.created_at, s.last_activity, s.session_token, s.user_id,
+               u.name AS user_name, u.email AS user_email, u.rol AS user_rol
+        FROM user_sessions s
+        LEFT JOIN users u ON u.id = s.user_id
+        ORDER BY s.last_activity DESC
+    ");
+    $sessions = $result->fetch_all(MYSQLI_ASSOC);
+    $conn->close();
+    return $sessions;
+}
+
+function destroy_session_by_id_any(int $sessionId): bool
+{
+    $conn = conectar_bd();
+    $stmt = $conn->prepare("DELETE FROM user_sessions WHERE id = ?");
+    $stmt->bind_param('i', $sessionId);
+    $stmt->execute();
+    $deleted = $stmt->affected_rows > 0;
+    $stmt->close();
+    $conn->close();
+    return $deleted;
+}

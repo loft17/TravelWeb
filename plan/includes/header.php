@@ -38,11 +38,17 @@ $conn->close();
   <header>
     <!-- Se muestra el título obtenido de la BD -->
     <div class="titulo"><?php echo htmlspecialchars($site_title); ?></div>
-    <label for="menu-toggle" class="menu-btn">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <?php if (!empty($_SESSION['user_name'])): ?>
+        <span style="font-size:.75em;color:#71717a;"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+        <a href="/plan/logout.php" style="font-size:.75em;color:#71717a;text-decoration:none;border:1px solid #ddd;padding:3px 8px;border-radius:4px;">Salir</a>
+      <?php endif; ?>
+      <label for="menu-toggle" class="menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+    </div>
   </header>
   
   <!-- Menú de pantalla completa con nuevo diseño -->

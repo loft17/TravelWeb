@@ -4,20 +4,19 @@
 include_once  $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 $conn = conectar_bd();
 
-// Obtener la fecha desde la URL (formato YYYY-MM-DD)
-$fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
+// Fecha: parámetro URL o hoy por defecto
+$fecha = isset($_GET['fecha']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['fecha'])
+    ? $_GET['fecha']
+    : date('Y-m-d');
 
-if ($fecha) {
-    $sql = "SELECT * FROM atracciones WHERE activo = TRUE AND fecha = ? ORDER BY orden, orden DESC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $fecha);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $stmt->close();
-} else {
-    $sql = "SELECT * FROM atracciones WHERE activo = TRUE ORDER BY orden, orden DESC";
-    $result = $conn->query($sql);
-}
+$viaje_id = VIAJE_ID;
+
+$sql = "SELECT * FROM atracciones WHERE activo = TRUE AND viaje_id = ? AND fecha = ? ORDER BY orden ASC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("is", $viaje_id, $fecha);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
 
 // Procesar la acción de toggle de "visto"
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_visto') {

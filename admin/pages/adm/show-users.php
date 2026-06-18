@@ -32,7 +32,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                         <div class="col-12 mt-5">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="header-title">Usuarios registrados</h4>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="header-title" style="margin:0;">Usuarios registrados</h4>
+                            <a href="add-user.php" class="btn btn-primary btn-sm">
+                                <i class="fa fa-plus"></i> Crear usuario
+                            </a>
+                        </div>
                                     <div class="single-table">
                                         <div class="table-responsive">
                                             <table id="usersTable" class="table table-hover progress-table text-center">
