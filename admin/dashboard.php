@@ -45,25 +45,41 @@ $ultimoLogin = $row['last_conection'] ?? null;
 $conn->close();
 
 // Fechas del viaje desde caché de configuración
-$dateStart  = get_config('date_start');
-$dateFinish = get_config('date_finish');
+$dateStart   = get_config('date_start');
+$dateFinish  = get_config('date_finish');
 $destination = get_config('destination', 'Destino');
 $titleWeb    = get_config('title_web', 'Panel Admin');
 
-$today     = new DateTime();
+// Preferir fechas del viaje activo si las tiene definidas
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/viajes.php';
+$viajeActivo = get_viaje_activo();
+if (!empty($viajeActivo['fecha_inicio'])) $dateStart  = $viajeActivo['fecha_inicio'];
+if (!empty($viajeActivo['fecha_fin']))    $dateFinish = $viajeActivo['fecha_fin'];
+
+$today     = new DateTime('today');
 $daysUntil = null;
 $tripDays  = null;
 $progress  = 0;
+$tripState = 'none'; // 'future' | 'ongoing' | 'past' | 'none'
+$countdownTarget = null;
 
 if ($dateStart && $dateFinish) {
     $start  = new DateTime($dateStart);
     $finish = new DateTime($dateFinish);
-    $tripDays  = (int)$start->diff($finish)->days;
+    $finish->setTime(23, 59, 59);
+    $tripDays = (int)$start->diff($finish)->days;
+
     if ($today < $start) {
-        $daysUntil = (int)$today->diff($start)->days;
+        $tripState = 'future';
+        $daysUntil = (int)(new DateTime())->diff($start)->days;
+        $countdownTarget = $start->format('Y-m-d') . 'T00:00:00';
     } elseif ($today <= $finish) {
-        $elapsed  = (int)$start->diff($today)->days;
-        $progress = $tripDays > 0 ? round(($elapsed / $tripDays) * 100) : 0;
+        $tripState = 'ongoing';
+        $elapsed   = (int)$start->diff($today)->days;
+        $progress  = $tripDays > 0 ? round(($elapsed / $tripDays) * 100) : 0;
+        $countdownTarget = $finish->format('Y-m-d\TH:i:s');
+    } else {
+        $tripState = 'past';
     }
 }
 ?>
@@ -85,25 +101,60 @@ if ($dateStart && $dateFinish) {
                 <div class="col-12">
                     <div class="card" style="background: linear-gradient(135deg,#667eea,#764ba2); color:#fff;">
                         <div class="card-body py-4">
-                            <h3 class="mb-1"><?= htmlspecialchars($titleWeb) ?></h3>
-                            <p class="mb-2"><i class="fa fa-map-marker"></i> <?= htmlspecialchars($destination) ?></p>
-                            <?php if ($dateStart && $dateFinish): ?>
-                                <p class="mb-1">
-                                    <i class="fa fa-calendar"></i>
-                                    <?= htmlspecialchars($dateStart) ?> &rarr; <?= htmlspecialchars($dateFinish) ?>
-                                    &nbsp;&bull;&nbsp; <?= $tripDays ?> días
-                                </p>
-                                <?php if ($daysUntil !== null): ?>
-                                    <p class="mb-0"><strong>Faltan <?= $daysUntil ?> días para el viaje</strong></p>
-                                <?php elseif ($progress > 0): ?>
-                                    <p class="mb-1">Viaje en curso — <?= $progress ?>% completado</p>
-                                    <div class="progress" style="height:8px;">
-                                        <div class="progress-bar bg-warning" style="width:<?= $progress ?>%"></div>
+                            <div class="row align-items-center">
+                                <div class="col-md-7">
+                                    <h3 class="mb-1"><?= htmlspecialchars($titleWeb) ?></h3>
+                                    <?php if (!empty($viajeActivo['nombre'])): ?>
+                                        <p class="mb-1" style="opacity:.85;font-size:15px;">
+                                            ✈ <?= htmlspecialchars($viajeActivo['nombre']) ?>
+                                            <?php if (!empty($viajeActivo['destino'])): ?>
+                                                &mdash; <?= htmlspecialchars($viajeActivo['destino']) ?>
+                                            <?php endif; ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    <?php if ($dateStart && $dateFinish): ?>
+                                        <p class="mb-2" style="opacity:.75;font-size:13px;">
+                                            <i class="fa fa-calendar"></i>
+                                            <?= date('d/m/Y', strtotime($dateStart)) ?> &rarr; <?= date('d/m/Y', strtotime($dateFinish)) ?>
+                                            &bull; <?= $tripDays ?> días
+                                        </p>
+                                        <?php if ($tripState === 'ongoing'): ?>
+                                            <p class="mb-1" style="font-size:13px;">Viaje en curso — <?= $progress ?>% completado</p>
+                                            <div class="progress" style="height:6px; max-width:300px; background:rgba(255,255,255,.3);">
+                                                <div class="progress-bar bg-warning" style="width:<?= $progress ?>%"></div>
+                                            </div>
+                                        <?php elseif ($tripState === 'past'): ?>
+                                            <p class="mb-0">🎉 Viaje completado</p>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <p class="mb-0" style="opacity:.7;font-size:13px;">
+                                            <a href="/admin/pages/adm/viajes.php" style="color:#fff;text-decoration:underline;">
+                                                Añade las fechas del viaje para ver el contador
+                                            </a>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+
+                                <?php if ($countdownTarget): ?>
+                                <div class="col-md-5 text-center mt-3 mt-md-0">
+                                    <p class="mb-2" style="font-size:12px; opacity:.8; text-transform:uppercase; letter-spacing:1px;">
+                                        <?= $tripState === 'future' ? 'Faltan para el viaje' : 'Tiempo restante' ?>
+                                    </p>
+                                    <div id="countdown" style="display:flex; justify-content:center; gap:10px;">
+                                        <?php foreach (['days' => 'Días', 'hours' => 'Horas', 'mins' => 'Min', 'secs' => 'Seg'] as $id => $label): ?>
+                                        <div style="background:rgba(0,0,0,.25); border-radius:10px; padding:10px 14px; min-width:64px;">
+                                            <div id="cd-<?= $id ?>" style="font-size:28px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums;">00</div>
+                                            <div style="font-size:10px; opacity:.75; text-transform:uppercase; margin-top:3px;"><?= $label ?></div>
+                                        </div>
+                                        <?php endforeach; ?>
                                     </div>
-                                <?php else: ?>
-                                    <p class="mb-0">Viaje completado</p>
+                                    <?php if ($tripState === 'past'): ?>
+                                        <p class="mt-2 mb-0" style="font-size:12px; opacity:.8;">El viaje ha terminado</p>
+                                    <?php endif; ?>
+                                </div>
                                 <?php endif; ?>
-                            <?php endif; ?>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -236,5 +287,62 @@ if ($dateStart && $dateFinish) {
 </div>
 
 <?php include 'includes/libraries/scripts.php'; ?>
+
+<?php if ($countdownTarget): ?>
+<style>
+#cd-days, #cd-hours, #cd-mins, #cd-secs {
+    transition: transform .15s ease, opacity .15s ease;
+}
+.cd-flip {
+    transform: translateY(-4px) scale(1.12);
+    opacity: .6;
+}
+</style>
+<script>
+(function () {
+    var target = new Date("<?= $countdownTarget ?>").getTime();
+    var ids    = ['days','hours','mins','secs'];
+    var prev   = {};
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+        var now  = Date.now();
+        var diff = target - now;
+
+        if (diff <= 0) {
+            ids.forEach(function(id) {
+                document.getElementById('cd-' + id).textContent = '00';
+            });
+            return;
+        }
+
+        var days  = Math.floor(diff / 86400000);
+        var hours = Math.floor((diff % 86400000) / 3600000);
+        var mins  = Math.floor((diff % 3600000)  / 60000);
+        var secs  = Math.floor((diff % 60000)    / 1000);
+        var vals  = { days: days, hours: hours, mins: mins, secs: secs };
+
+        ids.forEach(function(id) {
+            var el  = document.getElementById('cd-' + id);
+            var val = pad(vals[id]);
+            if (val !== prev[id]) {
+                el.classList.add('cd-flip');
+                setTimeout(function() {
+                    el.textContent = val;
+                    el.classList.remove('cd-flip');
+                }, 150);
+                prev[id] = val;
+            }
+        });
+
+        setTimeout(tick, 1000);
+    }
+
+    tick();
+})();
+</script>
+<?php endif; ?>
+
 </body>
 </html>
