@@ -1,5 +1,26 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+
+// Handle AJAX delete before any output
+if (isset($_GET['action']) && $_GET['action'] === 'delete_image') {
+    header('Content-Type: text/plain');
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['image'])) {
+        $uploadsBase = realpath($_SERVER['DOCUMENT_ROOT'] . '/content/uploads');
+        $imagePath   = realpath($_SERVER['DOCUMENT_ROOT'] . $_POST['image']);
+        if ($imagePath === false || $uploadsBase === false || strpos($imagePath, $uploadsBase . DIRECTORY_SEPARATOR) !== 0) {
+            http_response_code(400);
+            echo "error";
+        } elseif (file_exists($imagePath)) {
+            echo unlink($imagePath) ? "success" : "error";
+        } else {
+            echo "error";
+        }
+    } else {
+        echo "error";
+    }
+    exit;
+}
+
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 
 // Directorio de imágenes
@@ -18,9 +39,6 @@ foreach ($images as $img) {
     $relative_images[] = str_replace($_SERVER['DOCUMENT_ROOT'], '', $img);
 }
 ?>
-
-<!doctype html>
-<html class="no-js" lang="es">
 
 <body>
 

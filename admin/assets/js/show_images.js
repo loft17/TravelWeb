@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.deleteImage = function (imagePath) {
         if (confirm("¿Seguro que deseas eliminar esta imagen?")) {
-            fetch('/admin/includes/functions/delete_image.php', {
+            fetch('/admin/pages/files/show-imgs.php?action=delete_image', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'image=' + encodeURIComponent(imagePath)

@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let formData = new FormData();
         formData.append("file", file);
 
-        fetch("/admin/includes/functions/upload_imagen.php", {
+        fetch("/admin/pages/files/upload-imgs.php?action=upload_image", {
             method: "POST",
             body: formData
         })

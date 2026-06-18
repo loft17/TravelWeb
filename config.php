@@ -1,12 +1,12 @@
 <?php
 
-define('TITLE_WEB', 'Thai25');
-define('URL_WEB', 'http://192.168.0.118');
+defined('TITLE_WEB') || define('TITLE_WEB', 'Thai25');
+defined('URL_WEB')   || define('URL_WEB',   'http://192.168.0.118');
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'travel_user');
-define('DB_PASS', 'pruebas'); // Cambia por tu contraseña
-define('DB_NAME', 'travel_db');
+defined('DB_HOST') || define('DB_HOST', 'localhost');
+defined('DB_USER') || define('DB_USER', 'travel_user');
+defined('DB_PASS') || define('DB_PASS', 'pruebas');
+defined('DB_NAME') || define('DB_NAME', 'travel_db');
 
 if (!function_exists('conectar_bd')) {
     function conectar_bd(): mysqli {

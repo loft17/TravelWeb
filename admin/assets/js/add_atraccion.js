@@ -16,7 +16,7 @@ document.getElementById('imagen_file').addEventListener('change', function() {
         var formData = new FormData();
         formData.append('imagen_file', fileInput.files[0]);
         
-        fetch('/admin/includes/functions/add_atraccion.php?action=upload_image', {
+        fetch('/admin/pages/atracciones/add-atraccion.php?action=upload_image', {
             method: 'POST',
             body: formData
         })

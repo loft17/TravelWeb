@@ -1,16 +1,20 @@
-<?php 
+<?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+
+// Handle AJAX upload before any output
+if (isset($_GET['action']) && $_GET['action'] === 'upload_image') {
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/helpers.php';
+    header('Content-Type: application/json');
+    echo json_encode(uploadImageFile('imagen_file'));
+    exit;
+}
+
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php'; 
+include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php';
 ?>
 
-<!doctype html>
-<html class="no-js" lang="en">
-<head>
-    <!-- Incluir CSS de Quill -->
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-</head>
 <body>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <!-- page container area start -->
     <div class="page-container">
         <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php'; ?>

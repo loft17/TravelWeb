@@ -6,6 +6,16 @@ include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 $conn = conectar_bd();
 
+// Migración automática: añadir lat/lng si no existen
+if (!isset($_SESSION['_migration_coords'])) {
+    $chk = $conn->query("SHOW COLUMNS FROM atracciones LIKE 'lat'");
+    if ($chk && $chk->num_rows === 0) {
+        $conn->query("ALTER TABLE atracciones ADD COLUMN lat DECIMAL(10,8) DEFAULT NULL");
+        $conn->query("ALTER TABLE atracciones ADD COLUMN lng DECIMAL(11,8) DEFAULT NULL");
+    }
+    $_SESSION['_migration_coords'] = true;
+}
+
 // -----------------------------
 // Subida asíncrona de imagen (para llamadas AJAX)
 // -----------------------------

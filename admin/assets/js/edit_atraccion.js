@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 var formData = new FormData();
                 formData.append('imagen_file', fileInput.files[0]);
 
-                fetch('/admin/includes/functions/edit_atraccion.php?action=upload_image', {
+                fetch('/admin/pages/atracciones/edit-atraccion.php?action=upload_image', {
                     method: 'POST',
                     body: formData
                 })
