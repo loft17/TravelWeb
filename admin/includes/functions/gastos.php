@@ -24,6 +24,8 @@ _ensure_gastos_table();
 $gastos_error   = '';
 $gastos_success = '';
 
+$viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
 
@@ -40,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $gastos_error = 'Todos los campos son obligatorios y el importe debe ser positivo.';
         } else {
             $conn = conectar_bd();
-            $stmt = $conn->prepare("INSERT INTO gastos (categoria, descripcion, importe, divisa, fecha) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param('ssdss', $categoria, $descripcion, $importe, $divisa, $fecha);
+            $stmt = $conn->prepare("INSERT INTO gastos (categoria, descripcion, importe, divisa, fecha, viaje_id) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param('ssdssi', $categoria, $descripcion, $importe, $divisa, $fecha, $viaje_id);
             $stmt->execute();
             $stmt->close();
             $conn->close();
@@ -52,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = intval($_POST['id'] ?? 0);
         if ($id > 0) {
             $conn = conectar_bd();
-            $stmt = $conn->prepare("DELETE FROM gastos WHERE id = ?");
-            $stmt->bind_param('i', $id);
+            $stmt = $conn->prepare("DELETE FROM gastos WHERE id = ? AND viaje_id = ?");
+            $stmt->bind_param('ii', $id, $viaje_id);
             $stmt->execute();
             $stmt->close();
             $conn->close();
@@ -63,10 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Cargar todos los gastos
-$conn    = conectar_bd();
-$result  = $conn->query("SELECT * FROM gastos ORDER BY fecha DESC, id DESC");
-$gastos  = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+// Cargar gastos del viaje activo
+$conn   = conectar_bd();
+$stmt_g = $conn->prepare("SELECT * FROM gastos WHERE viaje_id = ? ORDER BY fecha DESC, id DESC");
+$stmt_g->bind_param("i", $viaje_id);
+$stmt_g->execute();
+$gastos  = $stmt_g->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt_g->close();
 
 // Totales por divisa
 $totales = [];

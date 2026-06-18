@@ -9,16 +9,18 @@ include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
  *
  * @return array Un arreglo con los registros de atracciones.
  */
-function getAtracciones() {
+function getAtracciones(int $viaje_id = 0): array {
     $conn = conectar_bd();
-    $sql = "SELECT * FROM atracciones";
-    $result = $conn->query($sql);
-    $atracciones = array();
-    if ($result && $result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $atracciones[] = $row;
-        }
+    if ($viaje_id > 0) {
+        $stmt = $conn->prepare("SELECT * FROM atracciones WHERE viaje_id = ?");
+        $stmt->bind_param("i", $viaje_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+    } else {
+        $result = $conn->query("SELECT * FROM atracciones");
     }
+    $atracciones = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     $conn->close();
     return $atracciones;
 }

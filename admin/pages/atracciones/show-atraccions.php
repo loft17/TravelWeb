@@ -5,8 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 // Incluir el archivo con la función para obtener las atracciones
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/show_atraccion.php';
 
-// Obtener el listado de atracciones
-$atracciones = getAtracciones();
+// Obtener el listado de atracciones del viaje activo
+$atracciones = getAtracciones($_SESSION['viaje_id'] ?? 0);
 ?>
 
 

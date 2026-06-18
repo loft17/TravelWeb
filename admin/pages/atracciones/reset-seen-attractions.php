@@ -5,11 +5,16 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log
 
 $conn = conectar_bd();
 
+$viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
 
-    $conn->query("UPDATE atracciones SET visto = 0 WHERE visto = 1");
-    $affected = $conn->affected_rows;
+    $stmt = $conn->prepare("UPDATE atracciones SET visto = 0 WHERE visto = 1 AND viaje_id = ?");
+    $stmt->bind_param("i", $viaje_id);
+    $stmt->execute();
+    $affected = $stmt->affected_rows;
+    $stmt->close();
     $conn->close();
 
     log_activity('reset_seen_attractions', "Marcadas no vistas: $affected atracción(es)");
@@ -20,8 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // GET: previsualización de afectados
-$preview     = $conn->query("SELECT id, nombre FROM atracciones WHERE visto = 1");
-$previewRows = $preview ? $preview->fetch_all(MYSQLI_ASSOC) : [];
+$stmt2 = $conn->prepare("SELECT id, nombre FROM atracciones WHERE visto = 1 AND viaje_id = ?");
+$stmt2->bind_param("i", $viaje_id);
+$stmt2->execute();
+$previewRows = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt2->close();
 $conn->close();
 
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';

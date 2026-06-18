@@ -42,6 +42,16 @@ CREATE TABLE IF NOT EXISTS configurations (
     config_value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS viajes (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    nombre      VARCHAR(255) NOT NULL,
+    destino     VARCHAR(255) DEFAULT '',
+    fecha_inicio DATE DEFAULT NULL,
+    fecha_fin    DATE DEFAULT NULL,
+    activo      TINYINT(1) NOT NULL DEFAULT 1,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS atracciones (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ciudad VARCHAR(255),
@@ -58,7 +68,8 @@ CREATE TABLE IF NOT EXISTS atracciones (
     visto BOOLEAN DEFAULT 0,
     activo BOOLEAN DEFAULT TRUE,
     lat DECIMAL(10,8) DEFAULT NULL,
-    lng DECIMAL(11,8) DEFAULT NULL
+    lng DECIMAL(11,8) DEFAULT NULL,
+    viaje_id INT NOT NULL DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS comida (
@@ -68,9 +79,9 @@ CREATE TABLE IF NOT EXISTS comida (
     puntuacion TINYINT(4) NULL,
     imagen_url VARCHAR(255) NULL,
     comido TINYINT(1) NULL DEFAULT 0,
+    viaje_id INT NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
-
 
 CREATE TABLE IF NOT EXISTS maleta (
     id int(11) NOT NULL AUTO_INCREMENT,
@@ -80,6 +91,7 @@ CREATE TABLE IF NOT EXISTS maleta (
     peso decimal(5,2) DEFAULT 0.00,
     importante tinyint(1) DEFAULT 0,
     fecha_agregado timestamp DEFAULT CURRENT_TIMESTAMP,
+    viaje_id INT NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
@@ -94,6 +106,7 @@ CREATE TABLE IF NOT EXISTS tareas (
     fecha_creada timestamp DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizada timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fecha_terminada timestamp DEFAULT NULL,
+    viaje_id INT NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
@@ -104,8 +117,8 @@ CREATE TABLE IF NOT EXISTS calendar_events (
     visita_manana TEXT,
     visita_tarde TEXT,
     visita_noche TEXT,
-    PRIMARY KEY (id),
-    UNIQUE KEY (fecha)
+    viaje_id INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS activity_log (
@@ -125,6 +138,7 @@ CREATE TABLE IF NOT EXISTS gastos (
     importe DECIMAL(10,2) NOT NULL,
     divisa VARCHAR(10) NOT NULL DEFAULT 'EUR',
     fecha DATE NOT NULL,
+    viaje_id INT NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -181,6 +195,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $mensaje = "<div class='message error'>⚠️ El usuario ya existe.</div>";
     }
+
+    // Crear viaje por defecto si no existe
+    $conn->query("INSERT INTO viajes (nombre, destino) SELECT 'Mi Viaje', '' FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM viajes LIMIT 1)");
 
     // Insertar configuración inicial
     $conn->query("INSERT INTO configurations (config_key, config_value) VALUES ('installed', '1') ON DUPLICATE KEY UPDATE config_value = '1'");

@@ -40,10 +40,11 @@ function generate_calendar() {
     }
 
     // Consultar la tabla calendar_events para obtener los datos de cada fecha.
-    $stmtEvents = $conn->prepare("SELECT * FROM calendar_events WHERE fecha BETWEEN ? AND ?");
+    $viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
+    $stmtEvents = $conn->prepare("SELECT * FROM calendar_events WHERE fecha BETWEEN ? AND ? AND viaje_id = ?");
     $dateFrom = $startDate->format('Y-m-d');
     $dateTo   = $endDate->format('Y-m-d');
-    $stmtEvents->bind_param("ss", $dateFrom, $dateTo);
+    $stmtEvents->bind_param("ssi", $dateFrom, $dateTo, $viaje_id);
     $stmtEvents->execute();
     $resultEvents = $stmtEvents->get_result();
     $stmtEvents->close();

@@ -32,10 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Se utiliza la URL que venga en el campo (ya sea la ingresada o actualizada por AJAX)
     $imagen_url = $_POST['imagen_url'];
-    $comido = isset($_POST['comido']) ? 1 : 0;
-    
-    $stmt = $conn->prepare("INSERT INTO comida (nombre, descripcion, puntuacion, imagen_url, comido) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssisi", $nombre, $descripcion, $puntuacion, $imagen_url, $comido);
+    $comido     = isset($_POST['comido']) ? 1 : 0;
+    $viaje_id   = (int)($_SESSION['viaje_id'] ?? 1);
+
+    $stmt = $conn->prepare("INSERT INTO comida (nombre, descripcion, puntuacion, imagen_url, comido, viaje_id) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssisii", $nombre, $descripcion, $puntuacion, $imagen_url, $comido, $viaje_id);
     
     if ($stmt->execute()) {
         header("Location: show-foods.php");

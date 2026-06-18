@@ -46,11 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $instagram_url_3 = $_POST['instagram_url_3'];
     $visto  = isset($_POST['visto'])  ? 1 : 0;
     $activo = isset($_POST['activo']) ? 1 : 0;
-    $lat    = $_POST['lat'] !== '' ? floatval($_POST['lat']) : null;
-    $lng    = $_POST['lng'] !== '' ? floatval($_POST['lng']) : null;
+    $lat      = $_POST['lat'] !== '' ? floatval($_POST['lat']) : null;
+    $lng      = $_POST['lng'] !== '' ? floatval($_POST['lng']) : null;
+    $viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
 
-    $stmt = $conn->prepare("INSERT INTO atracciones (ciudad, orden, fecha, nombre, descripcion, imagen_url, mapa_url, wikipedia_url, instagram_url_1, instagram_url_2, instagram_url_3, visto, activo, lat, lng) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sisssssssssiidd", $ciudad, $orden, $fecha, $nombre, $descripcion, $imagen_url, $mapa_url, $wikipedia_url, $instagram_url_1, $instagram_url_2, $instagram_url_3, $visto, $activo, $lat, $lng);
+    $stmt = $conn->prepare("INSERT INTO atracciones (ciudad, orden, fecha, nombre, descripcion, imagen_url, mapa_url, wikipedia_url, instagram_url_1, instagram_url_2, instagram_url_3, visto, activo, lat, lng, viaje_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sisssssssssiiddi", $ciudad, $orden, $fecha, $nombre, $descripcion, $imagen_url, $mapa_url, $wikipedia_url, $instagram_url_1, $instagram_url_2, $instagram_url_3, $visto, $activo, $lat, $lng, $viaje_id);
     
     if ($stmt->execute()) {
         header("Location: show-atraccions.php");

@@ -29,8 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_save_coords'])) 
     exit();
 }
 
-$result      = $conn->query("SELECT id, nombre, ciudad, fecha, visto, activo, lat, lng, imagen_url FROM atracciones ORDER BY fecha, orden");
-$atracciones = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+$viaje_id    = (int)($_SESSION['viaje_id'] ?? 1);
+$stmt        = $conn->prepare("SELECT id, nombre, ciudad, fecha, visto, activo, lat, lng, imagen_url FROM atracciones WHERE viaje_id = ? ORDER BY fecha, orden");
+$stmt->bind_param("i", $viaje_id);
+$stmt->execute();
+$atracciones = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 $conn->close();
 
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';

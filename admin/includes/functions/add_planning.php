@@ -18,29 +18,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("La fecha es obligatoria.");
     }
 
-    // Comprobar si ya existe un registro para la fecha
-    $stmt = $conn->prepare("SELECT id FROM calendar_events WHERE fecha = ?");
-    $stmt->bind_param("s", $fecha);
+    $viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
+
+    // Comprobar si ya existe un registro para la fecha y viaje
+    $stmt = $conn->prepare("SELECT id FROM calendar_events WHERE fecha = ? AND viaje_id = ?");
+    $stmt->bind_param("si", $fecha, $viaje_id);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        // Si existe, actualizamos el registro
         $stmt->close();
-        $stmt = $conn->prepare("UPDATE calendar_events SET ciudad = ?, visita_manana = ?, visita_tarde = ?, visita_noche = ? WHERE fecha = ?");
-        $stmt->bind_param("sssss", $ciudad, $visita_manana, $visita_tarde, $visita_noche, $fecha);
+        $stmt = $conn->prepare("UPDATE calendar_events SET ciudad = ?, visita_manana = ?, visita_tarde = ?, visita_noche = ? WHERE fecha = ? AND viaje_id = ?");
+        $stmt->bind_param("sssssi", $ciudad, $visita_manana, $visita_tarde, $visita_noche, $fecha, $viaje_id);
         if ($stmt->execute()) {
-            // Redirigir a la página del calendario (ajusta la ruta según corresponda)
             header("Location: /admin/pages/atracciones/planning.php?msg=updated");
             exit();
         } else {
             die("Error al actualizar el evento: " . $stmt->error);
         }
     } else {
-        // Si no existe, insertamos un nuevo registro
         $stmt->close();
-        $stmt = $conn->prepare("INSERT INTO calendar_events (fecha, ciudad, visita_manana, visita_tarde, visita_noche) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $fecha, $ciudad, $visita_manana, $visita_tarde, $visita_noche);
+        $stmt = $conn->prepare("INSERT INTO calendar_events (fecha, ciudad, visita_manana, visita_tarde, visita_noche, viaje_id) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssi", $fecha, $ciudad, $visita_manana, $visita_tarde, $visita_noche, $viaje_id);
         if ($stmt->execute()) {
             header("Location: /admin/pages/atracciones/planning.php?msg=inserted");
             exit();

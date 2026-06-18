@@ -4,28 +4,37 @@ include 'includes/templates/head.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/site_config.php';
 
-$conn = conectar_bd();
+$conn     = conectar_bd();
+$viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
 
 // Atracciones
-$row = $conn->query("SELECT COUNT(*) AS total, SUM(visto) AS vistas, SUM(activo) AS activas FROM atracciones")->fetch_assoc();
+$stmt = $conn->prepare("SELECT COUNT(*) AS total, SUM(visto) AS vistas, SUM(activo) AS activas FROM atracciones WHERE viaje_id = ?");
+$stmt->bind_param("i", $viaje_id); $stmt->execute();
+$row = $stmt->get_result()->fetch_assoc(); $stmt->close();
 $totalAtracciones = (int)$row['total'];
 $vistas           = (int)$row['vistas'];
 $activas          = (int)$row['activas'];
 $noVistas         = $totalAtracciones - $vistas;
 
 // Comida
-$row = $conn->query("SELECT COUNT(*) AS total, SUM(comido) AS comidas FROM comida")->fetch_assoc();
-$totalComida = (int)$row['total'];
+$stmt = $conn->prepare("SELECT COUNT(*) AS total, SUM(comido) AS comidas FROM comida WHERE viaje_id = ?");
+$stmt->bind_param("i", $viaje_id); $stmt->execute();
+$row = $stmt->get_result()->fetch_assoc(); $stmt->close();
+$totalComida   = (int)$row['total'];
 $comidasHechas = (int)$row['comidas'];
 
 // Tareas
-$row = $conn->query("SELECT COUNT(*) AS total, SUM(completado) AS completadas FROM tareas")->fetch_assoc();
-$totalTareas     = (int)$row['total'];
-$tareasCompletas = (int)$row['completadas'];
+$stmt = $conn->prepare("SELECT COUNT(*) AS total, SUM(completado) AS completadas FROM tareas WHERE viaje_id = ?");
+$stmt->bind_param("i", $viaje_id); $stmt->execute();
+$row = $stmt->get_result()->fetch_assoc(); $stmt->close();
+$totalTareas      = (int)$row['total'];
+$tareasCompletas  = (int)$row['completadas'];
 $tareasPendientes = $totalTareas - $tareasCompletas;
 
 // Maleta
-$row = $conn->query("SELECT COUNT(*) AS items, COALESCE(SUM(cantidad),0) AS total_cantidad FROM maleta")->fetch_assoc();
+$stmt = $conn->prepare("SELECT COUNT(*) AS items, COALESCE(SUM(cantidad),0) AS total_cantidad FROM maleta WHERE viaje_id = ?");
+$stmt->bind_param("i", $viaje_id); $stmt->execute();
+$row = $stmt->get_result()->fetch_assoc(); $stmt->close();
 $maletaItems    = (int)$row['items'];
 $maletaCantidad = (int)$row['total_cantidad'];
 

@@ -23,6 +23,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
 if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'admin') {
     include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/session_manager.php';
     refresh_session();
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/viajes.php';
+    ensure_viajes_setup();
+    get_viaje_activo_id();
 }
 
 if (!function_exists('csrf_check')) {

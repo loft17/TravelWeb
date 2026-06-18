@@ -1,5 +1,10 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/viajes.php';
+
+$viajeActualNombre = get_viaje_activo()['nombre'] ?? 'Mi Viaje';
+$todosLosViajes    = get_all_viajes();
+$viajeActivoId     = get_viaje_activo_id();
 
 // Obtener el nombre del archivo actual sin extensión
 $activePage = basename($_SERVER['SCRIPT_FILENAME'], '.php');
@@ -10,7 +15,7 @@ $platosPages      = ['add-food', 'show-foods', 'change-food'];
 $utilidadesPages  = ['task', 'maleta', 'emojis', 'gastos'];
 $ficherosPages    = ['show-imgs', 'upload-imgs'];
 $bbddPages        = ['export-json', 'export-sql'];
-$administracionPages = ['show-users', 'webconfig', 'activity-log', 'sessions'];
+$administracionPages = ['show-users', 'webconfig', 'activity-log', 'sessions', 'viajes'];
 
 // Determinar si cada grupo está activo
 $atraccionesActive   = in_array($activePage, $atraccionesPages) ? 'active' : '';
@@ -26,6 +31,28 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
     <div class="sidebar-header">
         <div class="logo">
             <a href="/index.html"><img src="/admin/assets/images/icon/logo.png" alt="logo"></a>
+        </div>
+    </div>
+    <!-- Selector de viaje -->
+    <div style="padding:10px 16px 8px; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div style="font-size:10px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:3px;">Viaje activo</div>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-light w-100 text-left dropdown-toggle" type="button" data-toggle="dropdown" style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                ✈ <?= htmlspecialchars($viajeActualNombre) ?>
+            </button>
+            <div class="dropdown-menu" style="min-width:200px;">
+                <?php foreach ($todosLosViajes as $v): ?>
+                <a class="dropdown-item <?= (int)$v['id'] === $viajeActivoId ? 'active' : '' ?>"
+                   href="/admin/switch-viaje.php?id=<?= (int)$v['id'] ?>">
+                    <?= htmlspecialchars($v['nombre']) ?>
+                    <?php if ((int)$v['id'] === $viajeActivoId): ?> ✓<?php endif; ?>
+                </a>
+                <?php endforeach; ?>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/admin/pages/adm/viajes.php">
+                    <i class="fa fa-plus"></i> Gestionar viajes
+                </a>
+            </div>
         </div>
     </div>
     <div class="main-menu">
@@ -162,6 +189,11 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                         <ul class="<?php echo $administracionActive; ?>">
                             <li class="<?php echo ($activePage == 'sessions') ? 'active' : '';?>">
                                 <a href="/admin/pages/adm/sessions.php">Sesiones Activas</a>
+                            </li>
+                        </ul>
+                        <ul class="<?php echo $administracionActive; ?>">
+                            <li class="<?php echo ($activePage == 'viajes') ? 'active' : '';?>">
+                                <a href="/admin/pages/adm/viajes.php">Gestionar Viajes</a>
                             </li>
                         </ul>
                     </li>

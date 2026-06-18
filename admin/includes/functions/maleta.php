@@ -8,6 +8,8 @@ function limpiar_input($data) {
     return htmlspecialchars(strip_tags(trim($data)));
 }
 
+$viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     csrf_check();
 
@@ -18,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $importante = isset($_POST['importante']) ? 1 : 0;
 
         if ($nombre && $categoria && $cantidad !== false) {
-            $stmt = $conn->prepare("INSERT INTO maleta (nombre, categoria, cantidad, importante) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssii", $nombre, $categoria, $cantidad, $importante);
+            $stmt = $conn->prepare("INSERT INTO maleta (nombre, categoria, cantidad, importante, viaje_id) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssiii", $nombre, $categoria, $cantidad, $importante, $viaje_id);
             $stmt->execute();
             $stmt->close();
         }
@@ -33,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $importante = isset($_POST['importante']) ? 1 : 0;
 
         if ($id !== false && $nombre && $categoria && $cantidad !== false) {
-            $stmt = $conn->prepare("UPDATE maleta SET nombre = ?, categoria = ?, cantidad = ?, importante = ? WHERE id = ?");
-            $stmt->bind_param("ssiii", $nombre, $categoria, $cantidad, $importante, $id);
+            $stmt = $conn->prepare("UPDATE maleta SET nombre = ?, categoria = ?, cantidad = ?, importante = ? WHERE id = ? AND viaje_id = ?");
+            $stmt->bind_param("ssiiii", $nombre, $categoria, $cantidad, $importante, $id, $viaje_id);
             $stmt->execute();
             $stmt->close();
         }
@@ -43,17 +45,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['delete_id'])) {
         $id = filter_var($_POST['delete_id'], FILTER_VALIDATE_INT);
         if ($id !== false) {
-            $stmt = $conn->prepare("DELETE FROM maleta WHERE id = ?");
-            $stmt->bind_param("i", $id);
+            $stmt = $conn->prepare("DELETE FROM maleta WHERE id = ? AND viaje_id = ?");
+            $stmt->bind_param("ii", $id, $viaje_id);
             $stmt->execute();
             $stmt->close();
         }
     }
 }
 
-$result    = $conn->query("SELECT * FROM maleta ORDER BY categoria ASC, nombre ASC");
-$articulos = $result->fetch_all(MYSQLI_ASSOC);
-$result->close();
+$stmt_m = $conn->prepare("SELECT * FROM maleta WHERE viaje_id = ? ORDER BY categoria ASC, nombre ASC");
+$stmt_m->bind_param("i", $viaje_id);
+$stmt_m->execute();
+$articulos = $stmt_m->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt_m->close();
 
 $categorias = ["Ropa", "Neceser", "Botiquin", "Electronica", "Documentacion", "Varios"];
 $articulos_por_categoria = [];

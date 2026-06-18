@@ -3,14 +3,13 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-$conn   = conectar_bd();
-$result = $conn->query("SELECT * FROM comida");
-$comidas = [];
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $comidas[] = $row;
-    }
-}
+$conn     = conectar_bd();
+$viaje_id = (int)($_SESSION['viaje_id'] ?? 1);
+$stmt     = $conn->prepare("SELECT * FROM comida WHERE viaje_id = ?");
+$stmt->bind_param("i", $viaje_id);
+$stmt->execute();
+$comidas  = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 $conn->close();
 
 if (isset($_GET['message'])) {
