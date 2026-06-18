@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS comida (
 );
 
 
-CREATE TABLE maleta (
+CREATE TABLE IF NOT EXISTS maleta (
     id int(11) NOT NULL AUTO_INCREMENT,
     nombre varchar(100) NOT NULL,
     categoria varchar(50) DEFAULT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE maleta (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE tareas (
+CREATE TABLE IF NOT EXISTS tareas (
     id int(11) NOT NULL AUTO_INCREMENT,
     titulo varchar(255) DEFAULT NULL,
     fecha_inicio date DEFAULT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE tareas (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE calendar_events (
+CREATE TABLE IF NOT EXISTS calendar_events (
     id int(11) NOT NULL AUTO_INCREMENT,
     fecha date NOT NULL,
     ciudad varchar(100) DEFAULT NULL,
@@ -106,7 +106,7 @@ if (!$conn->multi_query($sql)) {
 }
 
 // Limpiar resultados de multi_query
-while ($conn->next_result()) {;}
+while ($conn->more_results() && $conn->next_result()) {;}
 
 // **Verificar si la instalación ya fue realizada**
 $check_install_query = "SELECT config_value FROM configurations WHERE config_key = 'installed'";
