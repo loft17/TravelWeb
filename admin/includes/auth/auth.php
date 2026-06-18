@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/session_manager.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /admin/login.php');
@@ -90,6 +91,7 @@ $_SESSION['user_name'] = $name;
 $_SESSION['user_role'] = $rol;
 
 log_activity('login_success', "Usuario: $name ($email)");
+register_session($id);
 
 header('Location: /admin/dashboard.php');
 exit();

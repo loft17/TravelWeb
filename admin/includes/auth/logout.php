@@ -1,9 +1,15 @@
 <?php
-session_start();
-session_unset();  // Elimina todas las variables de sesión
-session_destroy();  // Destruye la sesión
-header("Location: login.php");  // Redirige al login después de cerrar sesión
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/session_manager.php';
+
+destroy_current_session();
+
+session_unset();
+session_destroy();
+
+header('Location: /admin/login.php');
 exit();
-?>
-
-

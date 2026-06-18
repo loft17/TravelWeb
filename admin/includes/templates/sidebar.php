@@ -5,12 +5,12 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 $activePage = basename($_SERVER['SCRIPT_FILENAME'], '.php');
 
 // Definir los arrays de páginas para cada grupo del menú
-$atraccionesPages = ['add-atraccion', 'show-atraccions', 'planning','reset-seen-attractions', 'reset-active-attractions'];
+$atraccionesPages = ['add-atraccion', 'show-atraccions', 'planning', 'mapa', 'reset-seen-attractions', 'reset-active-attractions'];
 $platosPages      = ['add-food', 'show-foods', 'change-food'];
-$utilidadesPages  = ['task', 'maleta', 'emojis'];
+$utilidadesPages  = ['task', 'maleta', 'emojis', 'gastos'];
 $ficherosPages    = ['show-imgs', 'upload-imgs'];
 $bbddPages        = ['export-json', 'export-sql'];
-$administracionPages = ['show-users', 'webconfig', 'activity-log'];
+$administracionPages = ['show-users', 'webconfig', 'activity-log', 'sessions'];
 
 // Determinar si cada grupo está activo
 $atraccionesActive   = in_array($activePage, $atraccionesPages) ? 'active' : '';
@@ -48,6 +48,9 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                             </li>
                             <li class="<?php echo ($activePage == 'planning') ? 'active' : '';?>">
                                 <a href="/admin/pages/atracciones/planning.php">Calendario</a>
+                            </li>
+                            <li class="<?php echo ($activePage == 'mapa') ? 'active' : '';?>">
+                                <a href="/admin/pages/atracciones/mapa.php">Mapa</a>
                             </li>
                             <li class="<?php echo ($activePage == 'reset-seen-attractions') ? 'active' : '';?>">
                                 <a href="/admin/pages/atracciones/reset-seen-attractions.php">
@@ -96,6 +99,9 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                             </li>
                             <li class="<?php echo ($activePage == 'emojis') ? 'active' : '';?>">
                                 <a href="/admin/pages/tools/emojis.php">Emojis</a>
+                            </li>
+                            <li class="<?php echo ($activePage == 'gastos') ? 'active' : '';?>">
+                                <a href="/admin/pages/tools/gastos.php">Gastos</a>
                             </li>
                         </ul>
                     </li>
@@ -151,6 +157,11 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                         <ul class="<?php echo $administracionActive; ?>">
                             <li class="<?php echo ($activePage == 'activity-log') ? 'active' : '';?>">
                                 <a href="/admin/pages/adm/activity-log.php">Log de Actividad</a>
+                            </li>
+                        </ul>
+                        <ul class="<?php echo $administracionActive; ?>">
+                            <li class="<?php echo ($activePage == 'sessions') ? 'active' : '';?>">
+                                <a href="/admin/pages/adm/sessions.php">Sesiones Activas</a>
                             </li>
                         </ul>
                     </li>

@@ -108,6 +108,19 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php
                                         </div>
                                     </div>
 
+                                    <!-- Coordenadas -->
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <input type="number" step="any" class="form-control" name="lat" id="lat" placeholder="Latitud (ej: 40.4168)">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="number" step="any" class="form-control" name="lng" id="lng" placeholder="Longitud (ej: -3.7038)">
+                                        </div>
+                                        <div class="col-sm-12 mt-1">
+                                            <small class="text-muted">Coordenadas para el mapa. Puedes obtenerlas haciendo clic derecho en Google Maps.</small>
+                                        </div>
+                                    </div>
+
                                     <!-- Miniatura -->
                                     <div class="form-group row">
                                         <div class="col-sm-12">

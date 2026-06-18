@@ -41,11 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $instagram_url_1 = $_POST['instagram_url_1'];
     $instagram_url_2 = $_POST['instagram_url_2'];
     $instagram_url_3 = $_POST['instagram_url_3'];
-    $visto = isset($_POST['visto']) ? 1 : 0;
+    $visto  = isset($_POST['visto'])  ? 1 : 0;
     $activo = isset($_POST['activo']) ? 1 : 0;
+    $lat    = ($_POST['lat'] ?? '') !== '' ? floatval($_POST['lat']) : null;
+    $lng    = ($_POST['lng'] ?? '') !== '' ? floatval($_POST['lng']) : null;
 
-    $stmt = $conn->prepare("UPDATE atracciones SET ciudad = ?, orden = ?, fecha = ?, nombre = ?, descripcion = ?, imagen_url = ?, mapa_url = ?, wikipedia_url = ?, instagram_url_1 = ?, instagram_url_2 = ?, instagram_url_3 = ?, visto = ?, activo = ? WHERE id = ?");
-    $stmt->bind_param("sisssssssssiii", $ciudad, $orden, $fecha, $nombre, $descripcion, $imagen_url, $mapa_url, $wikipedia_url, $instagram_url_1, $instagram_url_2, $instagram_url_3, $visto, $activo, $id);
+    $stmt = $conn->prepare("UPDATE atracciones SET ciudad = ?, orden = ?, fecha = ?, nombre = ?, descripcion = ?, imagen_url = ?, mapa_url = ?, wikipedia_url = ?, instagram_url_1 = ?, instagram_url_2 = ?, instagram_url_3 = ?, visto = ?, activo = ?, lat = ?, lng = ? WHERE id = ?");
+    $stmt->bind_param("sisssssssssiiddi", $ciudad, $orden, $fecha, $nombre, $descripcion, $imagen_url, $mapa_url, $wikipedia_url, $instagram_url_1, $instagram_url_2, $instagram_url_3, $visto, $activo, $lat, $lng, $id);
 
     if ($stmt->execute()) {
         header("Location: /admin/pages/atracciones/show-atraccions.php");

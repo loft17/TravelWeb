@@ -19,6 +19,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     }
 }
 
+// Revalidar sesión activa contra BD (máx. 1 vez cada 5 min)
+if (isset($_SESSION['user_id']) && $_SESSION['user_role'] === 'admin') {
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/session_manager.php';
+    refresh_session();
+}
+
 if (!function_exists('csrf_check')) {
     function csrf_check(): void
     {
