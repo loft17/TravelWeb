@@ -1,77 +1,76 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
+
+$conn = conectar_bd();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+
+    $conn->query("UPDATE atracciones SET activo = 1 WHERE activo = 0");
+    $affected = $conn->affected_rows;
+    $conn->close();
+
+    log_activity('reset_active_attractions', "Activadas: $affected atracción(es)");
+
+    $_SESSION['flash'] = ['type' => 'success', 'msg' => "Se han activado $affected atracción(es)."];
+    header('Location: /admin/pages/atracciones/show-atraccions.php');
+    exit();
+}
+
+// GET: previsualización de afectados
+$preview     = $conn->query("SELECT id, nombre FROM atracciones WHERE activo = 0");
+$previewRows = $preview ? $preview->fetch_all(MYSQLI_ASSOC) : [];
+$conn->close();
+
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 ?>
-
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="es">
 <body>
-    <!-- page container area start -->
-    <div class="page-container">
-        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php'; ?>
-        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php'; ?>
+<div class="page-container">
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php'; ?>
 
-        <!-- main content area start -->
-        <div class="main-content">
-            <!-- page title area end -->
-            <div class="main-content-inner">
-                <div class="row">
-                    <!-- No gutters start -->
-                    <div class="col-12 mt-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="header-title">CAMBIAR ESTADO: Atracciones - activado</div>
-                                
-                                <?php
-                                // Incluir la configuración para conectarse a la BBDD
-                                include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-                                $conn = conectar_bd();
-                                
-                                // Primero se obtienen los registros que se van a actualizar (activo = 0)
-                                $recordsToUpdate = [];
-                                $result = $conn->query("SELECT id, nombre FROM atracciones WHERE activo = 0");
-                                if ($result && $result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        $recordsToUpdate[] = $row;
-                                    }
-                                    $result->free();
-                                }
-                                
-                                // Actualizar: cambiar activo de 0 (Inactivo) a 1 (Activo)
-                                $sql = "UPDATE atracciones SET activo = 1 WHERE activo = 0";
-                                if ($conn->query($sql) === TRUE) {
-                                    $affected = $conn->affected_rows;
-                                    echo "<p><strong>Log de cambios:</strong></p>";
-                                    echo "<p>Updated <strong>$affected</strong> records: 'activo' status set to Active.</p>";
-                                    
-                                    // Mostrar listado de registros actualizados (solo los que se iban a actualizar)
-                                    if (!empty($recordsToUpdate)) {
-                                        echo "<p>Registros actualizados:</p><ul>";
-                                        foreach ($recordsToUpdate as $row) {
-                                            echo "<li>ID: " . $row['id'] . " - Name: " . htmlspecialchars($row['nombre']) . "</li>";
-                                        }
-                                        echo "</ul>";
-                                    } else {
-                                        echo "<p>No se encontraron registros para actualizar.</p>";
-                                    }
-                                } else {
-                                    echo "<p>Error al actualizar registros: " . $conn->error . "</p>";
-                                }
-                                $conn->close();
-                                ?>
-                            </div>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="row">
+                <div class="col-12 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title">Activar todas las atracciones</h4>
+
+                            <?php if (empty($previewRows)): ?>
+                                <div class="alert alert-info">
+                                    No hay atracciones inactivas. No se realizará ningún cambio.
+                                </div>
+                                <a href="show-atraccions.php" class="btn btn-secondary">Volver</a>
+                            <?php else: ?>
+                                <div class="alert alert-warning">
+                                    Esta acción activará <strong><?= count($previewRows) ?></strong> atracción(es) inactiva(s). ¿Confirmas?
+                                </div>
+                                <ul>
+                                    <?php foreach ($previewRows as $row): ?>
+                                        <li>ID <?= intval($row['id']) ?> — <?= htmlspecialchars($row['nombre']) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <form method="post">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                                    <button type="submit" class="btn btn-danger">Confirmar y activar todas</button>
+                                    <a href="show-atraccions.php" class="btn btn-secondary ms-2">Cancelar</a>
+                                </form>
+                            <?php endif; ?>
+
                         </div>
                     </div>
-                    <!-- No gutters end -->
                 </div>
             </div>
-            <!-- Notification area -->
-            <div id="copyNotification" style="display: none;" class="alert"></div>
         </div>
-        <!-- main content area end -->
-        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
     </div>
-    <!-- page container area end -->
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
+
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
+</div>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
 </body>
 </html>

@@ -30,6 +30,7 @@ if (isset($_GET['id'])) {
 
 // Procesar el formulario cuando se envíe
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    csrf_check();
     // Recoger los valores del formulario
     $name = $_POST['name'];
     $email = $_POST['email'];

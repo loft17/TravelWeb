@@ -9,9 +9,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/task.php';
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Tareas</title>
-    <!-- Incluye los estilos de Bootstrap -->
-    <link rel="stylesheet" href="/path/to/bootstrap.min.css">
-    <!-- Otros estilos adicionales -->
 </head>
 <body>
 <div class="page-container">
@@ -71,17 +68,19 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/task.php';
                                         </button>
                                         <?php if (!$tarea['completado']): ?>
                                             <form method="post" style="display:inline">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                                                 <input type="hidden" name="accion" value="completar">
-                                                <input type="hidden" name="id" value="<?= $tarea['id'] ?>">
+                                                <input type="hidden" name="id" value="<?= intval($tarea['id']) ?>">
                                                 <button type="submit" class="btn btn-success btn-sm">
                                                     <i class="ti-arrow-circle-down"></i>
                                                 </button>
                                             </form>
                                         <?php endif; ?>
                                         <form method="post" style="display:inline">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                                             <input type="hidden" name="accion" value="borrar">
-                                            <input type="hidden" name="id" value="<?= $tarea['id'] ?>">
-                                            <button type="submit" class="btn btn-danger btn-sm">
+                                            <input type="hidden" name="id" value="<?= intval($tarea['id']) ?>">
+                                            <button type="submit" class="btn btn-danger btn-sm" data-confirm="¿Eliminar la tarea «<?= htmlspecialchars($tarea['titulo'], ENT_QUOTES) ?>»?">
                                                 <i class="ti-trash"></i>
                                             </button>
                                         </form>
@@ -107,6 +106,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/task.php';
                   </div>
                   <div class="modal-body">
                     <form method="post" id="formTarea">
+                      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                       <input type="hidden" name="accion" value="crear">
                       <input type="hidden" name="id">
                       <div class="form-group">
@@ -164,11 +164,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/task.php';
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
 </div>
 
-<!-- Incluye los scripts necesarios -->
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
-<!-- Asegúrate de que se carguen jQuery y Bootstrap JS -->
-<script src="/path/to/jquery.min.js"></script>
-<script src="/path/to/bootstrap.bundle.min.js"></script>
 <script defer src="/admin/assets/js/task.js"></script>
 
 <!-- Script para cargar la info completa en el modal -->

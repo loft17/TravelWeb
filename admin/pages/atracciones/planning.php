@@ -58,6 +58,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/planning.php';
                <!-- Formulario para insertar/editar datos -->
                <form id="eventForm" method="post" action="/admin/includes/functions/add_planning.php">
                    <div class="modal-body">
+                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                        <input type="hidden" name="fecha" id="eventDate">
                        
                        <div class="form-group">

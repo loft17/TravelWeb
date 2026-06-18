@@ -30,6 +30,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
                                 <div class="header-title">ITEMS</div>
 
                                 <form method="POST" class="mb-3">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <div class="form-row align-items-center">
                                         <!-- Campo de nombre -->
                                         <div class="col-sm-3 my-1">
@@ -117,11 +118,13 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/maleta.php';
                                                                         </a>
                                                                         &nbsp;&nbsp;
                                                                         <!-- Espacio entre los íconos -->
-                                                                        <a href="?delete=<?= $articulo['id'] ?>"
-                                                                            onclick="return confirm('¿Seguro que deseas eliminar este artículo?')"
-                                                                            title="Eliminar">
-                                                                            <i class="ti-trash"></i>
-                                                                        </a>
+                                                                        <form method="post" style="display:inline" onsubmit="return confirm('¿Seguro que deseas eliminar este artículo?')">
+                                                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                                                                            <input type="hidden" name="delete_id" value="<?= intval($articulo['id']) ?>">
+                                                                            <button type="submit" class="btn btn-link p-0" title="Eliminar">
+                                                                                <i class="ti-trash"></i>
+                                                                            </button>
+                                                                        </form>
                                                                     </td>
 
                                                                 </tr>

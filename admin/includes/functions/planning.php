@@ -40,8 +40,13 @@ function generate_calendar() {
     }
 
     // Consultar la tabla calendar_events para obtener los datos de cada fecha.
-    $sqlEvents = "SELECT * FROM calendar_events WHERE fecha BETWEEN '" . $startDate->format('Y-m-d') . "' AND '" . $endDate->format('Y-m-d') . "'";
-    $resultEvents = $conn->query($sqlEvents);
+    $stmtEvents = $conn->prepare("SELECT * FROM calendar_events WHERE fecha BETWEEN ? AND ?");
+    $dateFrom = $startDate->format('Y-m-d');
+    $dateTo   = $endDate->format('Y-m-d');
+    $stmtEvents->bind_param("ss", $dateFrom, $dateTo);
+    $stmtEvents->execute();
+    $resultEvents = $stmtEvents->get_result();
+    $stmtEvents->close();
     $events = array();
     while ($row = $resultEvents->fetch_assoc()) {
         $events[$row['fecha']] = $row;
@@ -76,17 +81,17 @@ function generate_calendar() {
             if ($fechaCell >= $date_start && $fechaCell <= $date_finish) {
                 $cellContent  = "<table class='table table-borderless' style='margin-bottom: 0;'>";
                 $cellContent .= "<tr class='table-primary'><td>" . $currentDate->format('d/m/Y') . "</td></tr>";
-                $cellContent .= "<tr class='table-success'><td>" . $ciudad . "</td></tr>";
-                $cellContent .= "<tr><td>" . $visita_manana . "</td></tr>";
-                $cellContent .= "<tr><td>" . $visita_tarde . "</td></tr>";
-                $cellContent .= "<tr><td>" . $visita_noche . "</td></tr>";
+                $cellContent .= "<tr class='table-success'><td>" . htmlspecialchars($ciudad, ENT_QUOTES, 'UTF-8') . "</td></tr>";
+                $cellContent .= "<tr><td>" . htmlspecialchars($visita_manana, ENT_QUOTES, 'UTF-8') . "</td></tr>";
+                $cellContent .= "<tr><td>" . htmlspecialchars($visita_tarde, ENT_QUOTES, 'UTF-8') . "</td></tr>";
+                $cellContent .= "<tr><td>" . htmlspecialchars($visita_noche, ENT_QUOTES, 'UTF-8') . "</td></tr>";
                 $cellContent .= "</table>";
 
-                $tdAttributes = "data-date='{$fechaCell}' " .
-                                "data-ciudad='" . addslashes($ciudad) . "' " .
-                                "data-visita_manana='" . addslashes($visita_manana) . "' " .
-                                "data-visita_tarde='" . addslashes($visita_tarde) . "' " .
-                                "data-visita_noche='" . addslashes($visita_noche) . "'";
+                $tdAttributes = "data-date='" . htmlspecialchars($fechaCell, ENT_QUOTES, 'UTF-8') . "' " .
+                                "data-ciudad='" . htmlspecialchars($ciudad, ENT_QUOTES, 'UTF-8') . "' " .
+                                "data-visita_manana='" . htmlspecialchars($visita_manana, ENT_QUOTES, 'UTF-8') . "' " .
+                                "data-visita_tarde='" . htmlspecialchars($visita_tarde, ENT_QUOTES, 'UTF-8') . "' " .
+                                "data-visita_noche='" . htmlspecialchars($visita_noche, ENT_QUOTES, 'UTF-8') . "'";
                 $calendar_html .= "<td $tdAttributes>$cellContent</td>";
             } else {
                 // Para fechas fuera del rango original, no se muestra la fecha ni se asignan atributos de edición.

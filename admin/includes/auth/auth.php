@@ -1,85 +1,95 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params(['httponly' => true, 'samesite' => 'Strict']);
+    session_start();
+}
 
-include('../../../config.php');  // Subir dos niveles de directorio para acceder a config.php
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
 
-// Verificar si el formulario se ha enviado
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: /admin/login.php');
+    exit();
+}
 
-    // Verificar si el token CSRF es válido
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        // Si no es válido, denegar la solicitud
-        die("Error de validación CSRF. Solicitud no válida.");
-    }
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    $_SESSION['login_error'] = 'Token de seguridad inválido. Recarga la página e inténtalo de nuevo.';
+    header('Location: /admin/login.php');
+    exit();
+}
 
-    // Recoger los datos del formulario
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+// Comprobación de bloqueo por intentos fallidos
+$maxAttempts  = 5;
+$lockDuration = 15 * 60; // 15 minutos en segundos
 
-    // Conectar a la base de datos
-    $conn = conectar_bd();  // Función definida en db.php para la conexión
+if (isset($_SESSION['login_lockout_until']) && time() < $_SESSION['login_lockout_until']) {
+    $remaining = ceil(($_SESSION['login_lockout_until'] - time()) / 60);
+    $_SESSION['login_error'] = "Demasiados intentos fallidos. Espera {$remaining} minuto(s) antes de volver a intentarlo.";
+    header('Location: /admin/login.php');
+    exit();
+}
 
-    // Preparar la consulta para buscar al usuario en la base de datos
-    $stmt = $conn->prepare("SELECT id, name, password, rol FROM users WHERE email = ? AND active = 1");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
+$email    = trim($_POST['email'] ?? '');
+$password = $_POST['password'] ?? '';
 
-    // Si el usuario existe, procedemos a verificar la contraseña
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $name, $hashed_password, $rol);
-        $stmt->fetch();
+$conn = conectar_bd();
+$stmt = $conn->prepare("SELECT id, name, password, rol FROM users WHERE email = ? AND active = 1");
+$stmt->bind_param('s', $email);
+$stmt->execute();
+$stmt->store_result();
 
-        // Verificar la contraseña con password_verify()
-        if (password_verify($password, $hashed_password)) {
+$loginOk = false;
 
-            // Verificar que el usuario tenga el rol "admin"
-            if ($rol !== 'admin') {
-                // Si el rol no es admin, redirigir a la página de login con un error
-                $_SESSION['login_error'] = "No tienes permisos de administrador.";
-                header("Location: ../../login.php");
-                exit();
-            }
+if ($stmt->num_rows > 0) {
+    $stmt->bind_result($id, $name, $hashed_password, $rol);
+    $stmt->fetch();
 
-            // Regenerar el ID de sesión para prevenir ataques de fijación de sesión
-            session_regenerate_id(true);  // Genera un nuevo ID de sesión y destruye el viejo
-
-            // Actualizar last_conection y ip_conection
-            $last_conection = date('Y-m-d H:i:s');  // Fecha y hora actual
-            $ip_conection = $_SERVER['REMOTE_ADDR']; // IP del cliente
-
-            // Actualizamos la información de la conexión
-            $update_stmt = $conn->prepare("UPDATE users SET last_conection = ?, ip_conection = ? WHERE id = ?");
-            $update_stmt->bind_param("ssi", $last_conection, $ip_conection, $id);
-            $update_stmt->execute();
-            $update_stmt->close();
-
-            // Establecer variables de sesión
-            $_SESSION['user_id'] = $id;
-            $_SESSION['user_name'] = $name;
-            $_SESSION['user_role'] = $rol;
-
-            // Redirigir al dashboard de admin
-            header("Location: ../../dashboard.php");
-            exit();
-
-        } else {
-            // Contraseña incorrecta
-            $_SESSION['login_error'] = "Contraseña incorrecta.";
-            header("Location: ../../login.php");
+    if (password_verify($password, $hashed_password)) {
+        if ($rol !== 'admin') {
+            $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+            $_SESSION['login_error'] = 'No tienes permisos de administrador.';
+            header('Location: /admin/login.php');
             exit();
         }
-    } else {
-        // Usuario no encontrado
-        $_SESSION['login_error'] = "Usuario no encontrado.";
-        header("Location: ../../login.php");
-        exit();
+        $loginOk = true;
     }
-
-    // Cerrar la sentencia
-    $stmt->close();
-    
-    // Eliminar el token CSRF después de su uso
-    unset($_SESSION['csrf_token']);
 }
-?>
+
+$stmt->close();
+
+if (!$loginOk) {
+    $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+    if ($_SESSION['login_attempts'] >= $maxAttempts) {
+        $_SESSION['login_lockout_until'] = time() + $lockDuration;
+        unset($_SESSION['login_attempts']);
+        $_SESSION['login_error'] = 'Demasiados intentos fallidos. Cuenta bloqueada 15 minutos.';
+        log_activity('login_blocked', "Email: $email — IP bloqueada por exceso de intentos");
+    } else {
+        $left = $maxAttempts - $_SESSION['login_attempts'];
+        $_SESSION['login_error'] = "Credenciales incorrectas. Te quedan {$left} intento(s).";
+        log_activity('login_failed', "Email: $email");
+    }
+    header('Location: /admin/login.php');
+    exit();
+}
+
+// Login correcto: limpiar contadores y regenerar sesión
+unset($_SESSION['login_attempts'], $_SESSION['login_lockout_until']);
+session_regenerate_id(true);
+
+$now = date('Y-m-d H:i:s');
+$ip  = $_SERVER['REMOTE_ADDR'];
+$upd = $conn->prepare("UPDATE users SET last_conection = ?, ip_conection = ? WHERE id = ?");
+$upd->bind_param('ssi', $now, $ip, $id);
+$upd->execute();
+$upd->close();
+$conn->close();
+
+$_SESSION['user_id']   = $id;
+$_SESSION['user_name'] = $name;
+$_SESSION['user_role'] = $rol;
+
+log_activity('login_success', "Usuario: $name ($email)");
+
+header('Location: /admin/dashboard.php');
+exit();

@@ -18,8 +18,6 @@ $notification = isset($configData['notification']) ? $configData['notification']
 <head>
     <meta charset="UTF-8">
     <title>Configuración del Sitio</title>
-    <!-- Incluye los estilos de Bootstrap -->
-    <link rel="stylesheet" href="/path/to/bootstrap.min.css">
 </head>
 <body>
     <!-- Contenedor principal -->
@@ -37,6 +35,7 @@ $notification = isset($configData['notification']) ? $configData['notification']
                             <div class="card-body">
                                 <h4 class="header-title">Modificar Configuraciones</h4>
                                 <form class="form-horizontal" method="post">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <?php foreach ($fields as $key => $label): ?>
                                         <div class="form-group">
                                             <label for="<?php echo $key; ?>" class="col-form-label"><?php echo $label; ?>:</label>
@@ -60,8 +59,5 @@ $notification = isset($configData['notification']) ? $configData['notification']
     <!-- Fin del contenedor principal -->
 
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
-    <!-- Asegúrate de cargar jQuery y Bootstrap JS -->
-    <script src="/path/to/jquery.min.js"></script>
-    <script src="/path/to/bootstrap.bundle.min.js"></script>
 </body>
 </html>

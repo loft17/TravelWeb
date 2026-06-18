@@ -3,6 +3,7 @@
 
 // Incluimos el archivo de configuración para usar la función conectar_bd()
 include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/site_config.php';
 
 /**
  * Procesa la actualización de las configuraciones y retorna los valores actuales.
@@ -31,6 +32,7 @@ function process_config_web() {
 
     // Si se envía el formulario, se actualizan los valores.
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        csrf_check();
         foreach ($fields as $key => $label) {
             $value = isset($_POST[$key]) ? trim($_POST[$key]) : '';
             $stmt = $conn->prepare("UPDATE configurations SET config_value = ? WHERE config_key = ?");
@@ -42,6 +44,7 @@ function process_config_web() {
                 echo "<div class='alert alert-danger'>Error en la consulta para $label: " . $conn->error . "</div>";
             }
         }
+        clear_config_cache();
         $notification = "<div class='alert alert-success'>Las configuraciones se han actualizado correctamente.</div>";
     }
 

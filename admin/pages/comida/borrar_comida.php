@@ -1,7 +1,6 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -12,30 +11,29 @@ csrf_check();
 
 $id = intval($_POST['id'] ?? 0);
 if ($id <= 0) {
-    exit("ID de atracción no especificado.");
+    exit("ID no especificado.");
 }
 
 $conn = conectar_bd();
 
-$stmt = $conn->prepare("SELECT id FROM atracciones WHERE id = ?");
+$stmt = $conn->prepare("SELECT id FROM comida WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
     $stmt->close();
-    $del = $conn->prepare("DELETE FROM atracciones WHERE id = ?");
+    $del = $conn->prepare("DELETE FROM comida WHERE id = ?");
     $del->bind_param("i", $id);
     if ($del->execute()) {
-        log_activity('delete_atraccion', "ID: $id");
-        header("Location: /admin/pages/atracciones/show-atraccions.php?message=Atraccion+eliminada+correctamente.");
+        header("Location: show-foods.php?message=Registro+eliminado+correctamente.");
     } else {
-        echo "Error al eliminar la atracción.";
+        echo "Error al eliminar el registro.";
     }
     $del->close();
 } else {
     $stmt->close();
-    echo "Atracción no encontrada.";
+    echo "Registro no encontrado.";
 }
 
 $conn->close();

@@ -40,6 +40,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/edit_food.php';
                                 <!-- Formulario con enctype para permitir subir archivos -->
                                 <form action="edit-food.php?id=<?php echo $id; ?>" method="post"
                                     enctype="multipart/form-data" onsubmit="updateDescription()">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
                                     <!-- NOMBRE -->
                                     <div class="form-group row">

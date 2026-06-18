@@ -10,7 +10,7 @@ $platosPages      = ['add-food', 'show-foods', 'change-food'];
 $utilidadesPages  = ['task', 'maleta', 'emojis'];
 $ficherosPages    = ['show-imgs', 'upload-imgs'];
 $bbddPages        = ['export-json', 'export-sql'];
-$administracionPages = ['show-users', 'webconfig'];
+$administracionPages = ['show-users', 'webconfig', 'activity-log'];
 
 // Determinar si cada grupo está activo
 $atraccionesActive   = in_array($activePage, $atraccionesPages) ? 'active' : '';
@@ -144,8 +144,13 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                             </li>
                         </ul>
                         <ul class="<?php echo $administracionActive; ?>">
-                            <li class="<?php echo ($activePage == 'show-users') ? 'active' : '';?>">
+                            <li class="<?php echo ($activePage == 'webconfig') ? 'active' : '';?>">
                                 <a href="/admin/pages/adm/webconfig.php">Configuración</a>
+                            </li>
+                        </ul>
+                        <ul class="<?php echo $administracionActive; ?>">
+                            <li class="<?php echo ($activePage == 'activity-log') ? 'active' : '';?>">
+                                <a href="/admin/pages/adm/activity-log.php">Log de Actividad</a>
                             </li>
                         </ul>
                     </li>

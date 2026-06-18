@@ -1,0 +1,20 @@
+# Cabeceras de seguridad HTTP
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Ocultar la versión de PHP
+<IfModule mod_php.c>
+    php_flag expose_php Off
+</IfModule>
+
+# Evitar listado de directorios
+Options -Indexes
+
+# Proteger config.php de acceso directo desde otras rutas
+<Files "config.php">
+    Require all denied
+</Files>

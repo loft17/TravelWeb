@@ -31,6 +31,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/add_atraccion.php
                                 <?php endif; ?>
                                 
                                 <form action="add-atraccion.php" method="post" enctype="multipart/form-data" onsubmit="updateDescription()">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <div class="form-group row">
                                         <div class="col-sm-12">
                                             <input type="text" class="form-control" placeholder="Nombre" name="nombre" id="nombre" required>

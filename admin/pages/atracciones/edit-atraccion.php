@@ -32,6 +32,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/edit_atraccion.ph
                                 <?php endif; ?>
                                 
                                 <form action="edit-atraccion.php?id=<?php echo $atraccion['id']; ?>" method="post" enctype="multipart/form-data" onsubmit="updateDescription()">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <div class="form-group row">
                                         <div class="col-sm-12">
                                             <input type="text" class="form-control" placeholder="Nombre" name="nombre" id="nombre" required value="<?php echo htmlspecialchars($atraccion['nombre']); ?>">

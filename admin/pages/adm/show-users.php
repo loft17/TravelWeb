@@ -9,7 +9,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 <head>
     <meta charset="UTF-8">
     <title>Usuarios</title>
-    <!-- Aquí van los otros elementos de <head> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 </head>
 
 <body>
@@ -35,7 +35,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                     <h4 class="header-title">Usuarios registrados</h4>
                                     <div class="single-table">
                                         <div class="table-responsive">
-                                            <table class="table table-hover progress-table text-center">
+                                            <table id="usersTable" class="table table-hover progress-table text-center">
                                                 <thead class="text-uppercase">
                                                     <tr>
                                                         <th scope="col">ID</th>
@@ -75,11 +75,13 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                                                                     </a>
                                                                 </li>
                                                                 <li class="mr-3">
-                                                                    <a href="../includes/functions/delete-user.php?id=<?php echo $user['id']; ?>"
-                                                                        class="text-danger"
-                                                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
-                                                                        <i class="ti-trash"></i>
-                                                                    </a>
+                                                                    <form method="post" action="../includes/functions/delete-user.php" style="display:inline">
+                                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                                                        <input type="hidden" name="id" value="<?php echo intval($user['id']); ?>">
+                                                                        <button type="submit" class="btn btn-link text-danger p-0" data-confirm="¿Eliminar al usuario <?php echo htmlspecialchars($user['name'], ENT_QUOTES); ?>?">
+                                                                            <i class="ti-trash"></i>
+                                                                        </button>
+                                                                    </form>
                                                                 </li>
                                                             </ul>
                                                         </td>
@@ -101,7 +103,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
                             <br>
                             <!-- mensaje de usuario -->
                             <?php if (isset($_GET['message'])): ?>
-                            <div class="alert alert-success"><?php echo $_GET['message']; ?></div>
+                            <div class="alert alert-success"><?php echo htmlspecialchars($_GET['message']); ?></div>
                             <?php endif; ?>
 
                         </div>
@@ -120,6 +122,16 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
     <!-- page container area end -->
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php';?>
     <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php';?>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#usersTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json' },
+                pageLength: 25,
+                order: [[0, 'asc']]
+            });
+        });
+    </script>
 </body>
 
 </html>

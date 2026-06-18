@@ -5,42 +5,46 @@ include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 $conn = conectar_bd();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $accion = filter_input(INPUT_POST, 'accion', FILTER_SANITIZE_STRING);
+    $accion = trim($_POST['accion'] ?? '');
 
     if ($accion === 'crear') {
-        $titulo = filter_input(INPUT_POST, 'titulo', FILTER_SANITIZE_STRING);
-        $fecha_inicio = filter_input(INPUT_POST, 'fecha_inicio', FILTER_SANITIZE_STRING);
-        $fecha_fin = filter_input(INPUT_POST, 'fecha_fin', FILTER_SANITIZE_STRING);
-        $info = filter_input(INPUT_POST, 'info', FILTER_SANITIZE_STRING);
-        $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL) ?: null;
+        $titulo      = trim($_POST['titulo'] ?? '');
+        $fecha_inicio = trim($_POST['fecha_inicio'] ?? '');
+        $fecha_fin    = trim($_POST['fecha_fin'] ?? '');
+        $info         = trim($_POST['info'] ?? '');
+        $url          = filter_input(INPUT_POST, 'url', FILTER_VALIDATE_URL) ?: null;
 
         $stmt = $conn->prepare("INSERT INTO tareas (titulo, fecha_inicio, fecha_fin, info, url) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $titulo, $fecha_inicio, $fecha_fin, $info, $url);
         $stmt->execute();
+        $stmt->close();
 
     } elseif ($accion === 'borrar') {
-        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $id = intval($_POST['id'] ?? 0);
         $stmt = $conn->prepare("DELETE FROM tareas WHERE id=?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
+        $stmt->close();
 
     } elseif ($accion === 'completar') {
-        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+        $id = intval($_POST['id'] ?? 0);
         $stmt = $conn->prepare("UPDATE tareas SET completado=1, fecha_terminada=NOW() WHERE id=?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
+        $stmt->close();
 
     } elseif ($accion === 'editar') {
-        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $titulo = filter_input(INPUT_POST, 'titulo', FILTER_SANITIZE_STRING);
-        $fecha_inicio = filter_input(INPUT_POST, 'fecha_inicio', FILTER_SANITIZE_STRING);
-        $fecha_fin = filter_input(INPUT_POST, 'fecha_fin', FILTER_SANITIZE_STRING);
-        $info = filter_input(INPUT_POST, 'info', FILTER_SANITIZE_STRING);
-        $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL) ?: null;
+        $id           = intval($_POST['id'] ?? 0);
+        $titulo       = trim($_POST['titulo'] ?? '');
+        $fecha_inicio = trim($_POST['fecha_inicio'] ?? '');
+        $fecha_fin    = trim($_POST['fecha_fin'] ?? '');
+        $info         = trim($_POST['info'] ?? '');
+        $url          = filter_input(INPUT_POST, 'url', FILTER_VALIDATE_URL) ?: null;
 
         $stmt = $conn->prepare("UPDATE tareas SET titulo=?, fecha_inicio=?, fecha_fin=?, info=?, url=? WHERE id=?");
         $stmt->bind_param("sssssi", $titulo, $fecha_inicio, $fecha_fin, $info, $url, $id);
         $stmt->execute();
+        $stmt->close();
     }
 }
 

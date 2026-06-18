@@ -5,6 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 $conn = conectar_bd();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     // Recoger y sanitizar los datos recibidos vía POST
     $fecha         = $_POST['fecha'] ?? '';
     $ciudad        = $_POST['ciudad'] ?? '';

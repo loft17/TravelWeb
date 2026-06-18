@@ -124,9 +124,13 @@ $atracciones = getAtracciones();
                                                             <a href="edit-atraccion.php?id=<?php echo $row['id']; ?>" class="btn btn-primary btn-sm">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
-                                                            <a href="/admin/includes/functions/delete-atraccion.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este registro?')">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </a>
+                                                            <form method="post" action="/admin/includes/functions/delete-atraccion.php" style="display:inline">
+                                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                                                <input type="hidden" name="id" value="<?php echo intval($row['id']); ?>">
+                                                                <button type="submit" class="btn btn-danger btn-sm" data-confirm="¿Eliminar la atracción «<?php echo htmlspecialchars($row['nombre'], ENT_QUOTES); ?>»?">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                     <?php endforeach; ?>
@@ -162,5 +166,13 @@ $atracciones = getAtracciones();
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <!-- Cargar el script externo con la funcionalidad de la tabla -->
     <script src="/admin/assets/js/show_atraccion.js"></script>
+    <?php if (!empty($_SESSION['flash'])): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showToast('<?= htmlspecialchars($_SESSION['flash']['type'], ENT_QUOTES) ?>', '<?= htmlspecialchars($_SESSION['flash']['msg'], ENT_QUOTES) ?>');
+        });
+    </script>
+    <?php unset($_SESSION['flash']); ?>
+    <?php endif; ?>
 </body>
 </html>

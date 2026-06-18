@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../config.php';
 
+// Bloquear acceso si la instalación ya está completada
+if (file_exists(__DIR__ . '/.installed')) {
+    header("Location: /admin/login.php");
+    exit();
+}
+
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS);
 if ($conn->connect_error) {
     die("❌ Error de conexión: " . $conn->connect_error);
@@ -99,6 +105,16 @@ CREATE TABLE IF NOT EXISTS calendar_events (
     PRIMARY KEY (id),
     UNIQUE KEY (fecha)
 );
+
+CREATE TABLE IF NOT EXISTS activity_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT DEFAULT NULL,
+    user_name VARCHAR(100) DEFAULT NULL,
+    action VARCHAR(100) NOT NULL,
+    detail TEXT DEFAULT NULL,
+    ip VARCHAR(45) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ";
 
 if (!$conn->multi_query($sql)) {
@@ -148,6 +164,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->query("INSERT INTO configurations (config_key, config_value) VALUES ('title_web', '$title_web') ON DUPLICATE KEY UPDATE config_value = '$title_web'");
     $footer_text = "copyright &copy; " . date('Y') . " - developed by <b>joseromera.net</b>";
     $conn->query("INSERT INTO `configurations` (`config_key`, `config_value`) VALUES ('footer_text', '$footer_text') ON DUPLICATE KEY UPDATE config_value = '$footer_text'");
+
+    // Crear lock file para bloquear futuros accesos a este script
+    file_put_contents(__DIR__ . '/.installed', date('Y-m-d H:i:s'));
 
     $mensaje = "<div class='message success'>🎉 Instalación completada. <a href='/admin/login.php'>Ir al Panel</a></div>";
 }

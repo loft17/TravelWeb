@@ -15,3 +15,43 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 <!-- others plugins -->
 <script src="/admin/assets/js/plugins.js"></script>
 <script src="/admin/assets/js/scripts.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-confirm]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            var message = el.getAttribute('data-confirm') || '¿Estás seguro?';
+            var form = el.closest('form');
+            Swal.fire({
+                title: '¿Confirmar acción?',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    if (form) form.submit();
+                }
+            });
+        });
+    });
+});
+
+function showToast(icon, title) {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: title,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+}
+</script>

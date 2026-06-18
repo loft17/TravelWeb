@@ -3,7 +3,6 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/get-user.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/upload_img.php';
 
 // Verificar que el parámetro 'id' está presente en la URL
 if (isset($_GET['id'])) {
@@ -43,6 +42,7 @@ if (isset($_GET['id'])) {
                             <div class="card-body">
                                 <h4 class="header-title">Editar Usuario</h4>
                                 <form method="POST" action="../../includes/functions/edit_user.php?id=<?php echo $user['id']; ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                     <div class="form-group">
                                         <label for="name">Nombre</label>
                                         <input type="text" class="form-control" name="name" id="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>

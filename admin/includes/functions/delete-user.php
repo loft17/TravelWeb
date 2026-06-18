@@ -1,40 +1,47 @@
 <?php
-// Incluir la configuración de la base de datos
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
-include_once '../../../config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
 
-
-// Comprobar si el parámetro 'id' está presente en la URL
-if (isset($_GET['id'])) {
-    $user_id = $_GET['id'];
-
-    // Conectar a la base de datos
-    $conn = conectar_bd();
-
-    // Consultar para asegurarse de que el usuario existe antes de eliminarlo
-    $query = "SELECT * FROM users WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Eliminar el usuario
-        $delete_query = "DELETE FROM users WHERE id = ?";
-        $delete_stmt = $conn->prepare($delete_query);
-        $delete_stmt->bind_param("i", $user_id);
-        
-        if ($delete_stmt->execute()) {
-            // Redirigir a la página de usuarios con un mensaje de éxito
-            header("Location: /admin/adm/users.php?message=Usuario eliminado correctamente.");
-        } else {
-            // Mostrar error si la eliminación falla
-            echo "Error al eliminar el usuario.";
-        }
-    } else {
-        echo "Usuario no encontrado.";
-    }
-} else {
-    echo "ID de usuario no especificado.";
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit("Método no permitido.");
 }
+
+csrf_check();
+
+$id = intval($_POST['id'] ?? 0);
+if ($id <= 0) {
+    exit("ID de usuario no especificado.");
+}
+
+// Evitar que un admin se borre a sí mismo
+if ($id === intval($_SESSION['user_id'])) {
+    exit("No puedes eliminar tu propia cuenta.");
+}
+
+$conn = conectar_bd();
+
+$stmt = $conn->prepare("SELECT id FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->store_result();
+
+if ($stmt->num_rows > 0) {
+    $stmt->close();
+    $del = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $del->bind_param("i", $id);
+    if ($del->execute()) {
+        log_activity('delete_user', "ID: $id");
+        header("Location: /admin/pages/adm/show-users.php?message=Usuario+eliminado+correctamente.");
+    } else {
+        echo "Error al eliminar el usuario.";
+    }
+    $del->close();
+} else {
+    $stmt->close();
+    echo "Usuario no encontrado.";
+}
+
+$conn->close();
 ?>

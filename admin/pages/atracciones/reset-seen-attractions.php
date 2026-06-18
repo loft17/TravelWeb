@@ -1,78 +1,76 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/auth/protect.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/activity_log.php';
+
+$conn = conectar_bd();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+
+    $conn->query("UPDATE atracciones SET visto = 0 WHERE visto = 1");
+    $affected = $conn->affected_rows;
+    $conn->close();
+
+    log_activity('reset_seen_attractions', "Marcadas no vistas: $affected atracción(es)");
+
+    $_SESSION['flash'] = ['type' => 'success', 'msg' => "Se han marcado como no vistas $affected atracción(es)."];
+    header('Location: /admin/pages/atracciones/show-atraccions.php');
+    exit();
+}
+
+// GET: previsualización de afectados
+$preview     = $conn->query("SELECT id, nombre FROM atracciones WHERE visto = 1");
+$previewRows = $preview ? $preview->fetch_all(MYSQLI_ASSOC) : [];
+$conn->close();
+
 include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/head.php';
 ?>
-
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="es">
 <body>
-    <!-- page container area start -->
-    <div class="page-container">
-        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php'; ?>
-        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php'; ?>
+<div class="page-container">
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/sidebar.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/user-profile.php'; ?>
 
-        <!-- main content area start -->
-        <div class="main-content">
-            <!-- page title area end -->
-            <div class="main-content-inner">
-                <div class="row">
-                    <!-- No gutters start -->
-                    <div class="col-12 mt-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="header-title">CAMBIAR ESTADO: Atracciones - No visto</div>
-                                
-                                <?php
-                                // Incluir la configuración para conectarse a la BBDD
-                                include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="row">
+                <div class="col-12 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="header-title">Marcar todas como NO vistas</h4>
 
-                                // Conectar a la base de datos
-                                $conn = conectar_bd();
+                            <?php if (empty($previewRows)): ?>
+                                <div class="alert alert-info">
+                                    No hay atracciones marcadas como vistas. No se realizará ningún cambio.
+                                </div>
+                                <a href="show-atraccions.php" class="btn btn-secondary">Volver</a>
+                            <?php else: ?>
+                                <div class="alert alert-warning">
+                                    Esta acción marcará como <strong>no vistas</strong> <?= count($previewRows) ?> atracción(es). ¿Confirmas?
+                                </div>
+                                <ul>
+                                    <?php foreach ($previewRows as $row): ?>
+                                        <li>ID <?= intval($row['id']) ?> — <?= htmlspecialchars($row['nombre']) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <form method="post">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                                    <button type="submit" class="btn btn-danger">Confirmar y resetear vistas</button>
+                                    <a href="show-atraccions.php" class="btn btn-secondary ms-2">Cancelar</a>
+                                </form>
+                            <?php endif; ?>
 
-                                // Primero obtenemos los registros que se van a actualizar (visto = 1)
-                                $recordsToUpdate = [];
-                                $result = $conn->query("SELECT id, nombre FROM atracciones WHERE visto = 1");
-                                if ($result && $result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        $recordsToUpdate[] = $row;
-                                    }
-                                    $result->free();
-                                }
-
-                                // Actualizar: cambiar visto de 1 (Visto) a 0 (No visto)
-                                $sql = "UPDATE atracciones SET visto = 0 WHERE visto = 1";
-                                if ($conn->query($sql) === TRUE) {
-                                    $affected = $conn->affected_rows;
-                                    echo "<p><strong>Log de cambios:</strong></p>";
-                                    echo "<p>Se actualizaron <strong>$affected</strong> registros: se cambió el estado 'visto' de SI a NO.</p>";
-
-                                    if (!empty($recordsToUpdate)) {
-                                        echo "<p>Registros actualizados:</p><ul>";
-                                        foreach ($recordsToUpdate as $row) {
-                                            echo "<li>ID: " . $row['id'] . " - Nombre: " . htmlspecialchars($row['nombre']) . "</li>";
-                                        }
-                                        echo "</ul>";
-                                    } else {
-                                        echo "<p>No se encontraron registros para actualizar.</p>";
-                                    }
-                                } else {
-                                    echo "<p>Error al actualizar registros: " . $conn->error . "</p>";
-                                }
-                                $conn->close();
-                                ?>
-                            </div>
                         </div>
                     </div>
-                    <!-- No gutters end -->
                 </div>
             </div>
-            <!-- Notificación de copiado -->
-            <div id="copyNotification" style="display: none;" class="alert"></div>
         </div>
-        <!-- main content area end -->
-        <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
     </div>
-    <!-- page container area end -->
-    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
+
+    <?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/templates/footer.php'; ?>
+</div>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/libraries/scripts.php'; ?>
 </body>
 </html>
