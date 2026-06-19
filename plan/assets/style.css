@@ -629,4 +629,82 @@ a.cal-has-plan:hover {
 
 .transp-card-full { border-left: 3px solid var(--plan-accent); }
 
+/* Enlace número de vuelo */
+.transp-flight-link {
+  color: var(--plan-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.transp-flight-link:hover { text-decoration: underline; }
+
+/* Timeline de tramos con escalas */
+.transp-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: .85em;
+}
+
+.transp-leg {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0 2px 12px;
+  border-left: 2px solid var(--plan-accent);
+  position: relative;
+}
+.transp-leg::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--plan-accent);
+}
+
+.transp-leg-airport {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.transp-leg-code {
+  font-weight: 700;
+  font-size: 1em;
+  color: var(--plan-fg);
+}
+.transp-leg-time {
+  font-size: .88em;
+  color: var(--plan-muted);
+}
+.transp-leg-flight {
+  font-size: .8em;
+  color: var(--plan-muted);
+  padding-left: 2px;
+}
+
+.transp-stop {
+  padding-left: 12px;
+  border-left: 2px solid var(--plan-border);
+  margin: 0;
+}
+.transp-stop-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0 2px;
+}
+.transp-layover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--plan-border);
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: .78em;
+  color: var(--plan-muted);
+}
+
 

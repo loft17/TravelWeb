@@ -44,6 +44,11 @@ $por_fecha = [];
 foreach ($transportes as $t) {
     $por_fecha[$t['fecha']][] = $t;
 }
+
+function flight_link(string $numero): string {
+    $clean = strtoupper(str_replace(' ', '', $numero));
+    return '<a href="https://es.flightaware.com/live/flight/' . urlencode($clean) . '" target="_blank" rel="noopener" class="transp-flight-link">' . htmlspecialchars($numero) . '</a>';
+}
 ?>
 
 <body>
@@ -58,13 +63,87 @@ foreach ($transportes as $t) {
             <div class="transp-fecha-hdr">
                 <?= date('l, d M Y', strtotime($fecha)) ?>
             </div>
-            <?php foreach ($items as $t): ?>
+            <?php foreach ($items as $t):
+                $escalas = !empty($t['escalas']) ? json_decode($t['escalas'], true) : [];
+                $es_vuelo = ($t['tipo'] === 'avion');
+            ?>
             <div class="transp-card transp-card-full">
                 <div class="transp-tipo">
                     <span class="material-icons"><?= $iconos[$t['tipo']] ?? 'route' ?></span>
                     <span class="transp-label"><?= $labels[$t['tipo']] ?? 'Traslado' ?></span>
                 </div>
                 <div class="transp-info">
+
+                    <?php if (!empty($escalas)): ?>
+                    <!-- Timeline de tramos con escalas -->
+                    <div class="transp-timeline">
+
+                        <!-- Tramo 1: origen → primer aeropuerto de escala -->
+                        <div class="transp-leg">
+                            <div class="transp-leg-airport">
+                                <span class="transp-leg-code"><?= htmlspecialchars($t['origen']) ?></span>
+                                <?php if ($t['hora_salida']): ?>
+                                <span class="transp-leg-time"><?= substr($t['hora_salida'], 0, 5) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <?php if ($t['numero']): ?>
+                            <div class="transp-leg-flight">
+                                <span class="material-icons" style="font-size:13px;vertical-align:middle">flight</span>
+                                <?= $es_vuelo ? flight_link($t['numero']) : htmlspecialchars($t['numero']) ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php foreach ($escalas as $e): ?>
+                        <!-- Parada en escala -->
+                        <div class="transp-stop">
+                            <div class="transp-stop-info">
+                                <span class="transp-leg-code"><?= htmlspecialchars($e['aeropuerto']) ?></span>
+                                <?php if ($e['hora_llegada']): ?>
+                                <span class="transp-leg-time"><?= substr($e['hora_llegada'], 0, 5) ?></span>
+                                <?php endif; ?>
+                                <?php if (!empty($e['duracion_escala'])): ?>
+                                <span class="transp-layover-badge">
+                                    <span class="material-icons" style="font-size:11px">schedule</span>
+                                    <?= htmlspecialchars($e['duracion_escala']) ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Siguiente tramo desde la escala -->
+                        <div class="transp-leg">
+                            <div class="transp-leg-airport">
+                                <span class="transp-leg-code"><?= htmlspecialchars($e['aeropuerto']) ?></span>
+                                <?php if ($e['hora_salida']): ?>
+                                <span class="transp-leg-time"><?= substr($e['hora_salida'], 0, 5) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <?php if (!empty($e['numero'])): ?>
+                            <div class="transp-leg-flight">
+                                <span class="material-icons" style="font-size:13px;vertical-align:middle">flight</span>
+                                <?= $es_vuelo ? flight_link($e['numero']) : htmlspecialchars($e['numero']) ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Destino de este tramo -->
+                        <?php if (!empty($e['destino_sig'])): ?>
+                        <div class="transp-leg transp-leg-dest">
+                            <div class="transp-leg-airport">
+                                <span class="transp-leg-code"><?= htmlspecialchars($e['destino_sig']) ?></span>
+                                <?php if (!empty($e['hora_llegada_sig'])): ?>
+                                <span class="transp-leg-time"><?= substr($e['hora_llegada_sig'], 0, 5) ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        <?php endforeach; ?>
+
+                    </div>
+
+                    <?php else: ?>
+                    <!-- Vista simple sin escalas -->
                     <div class="transp-ruta">
                         <?= htmlspecialchars($t['origen']) ?>
                         <span class="material-icons transp-arrow">arrow_forward</span>
@@ -78,9 +157,13 @@ foreach ($transportes as $t) {
                         <span>→ <?= substr($t['hora_llegada'], 0, 5) ?></span>
                         <?php endif; ?>
                         <?php if ($t['numero']): ?>
-                        <span class="transp-num"><?= htmlspecialchars($t['numero']) ?></span>
+                        <span class="transp-num">
+                            <?= $es_vuelo ? flight_link($t['numero']) : htmlspecialchars($t['numero']) ?>
+                        </span>
                         <?php endif; ?>
                     </div>
+                    <?php endif; ?>
+
                     <?php if ($t['notas']): ?>
                     <div class="transp-notas"><?= htmlspecialchars($t['notas']) ?></div>
                     <?php endif; ?>

@@ -54,7 +54,13 @@ include 'includes/functions.php';
                     <span>→ <?= substr($t['hora_llegada'], 0, 5) ?></span>
                     <?php endif; ?>
                     <?php if ($t['numero']): ?>
-                    <span class="transp-num"><?= htmlspecialchars($t['numero']) ?></span>
+                    <span class="transp-num">
+                        <?php if ($t['tipo'] === 'avion'): ?>
+                        <a href="https://es.flightaware.com/live/flight/<?= urlencode(strtoupper(str_replace(' ', '', $t['numero']))) ?>" target="_blank" rel="noopener" class="transp-flight-link"><?= htmlspecialchars($t['numero']) ?></a>
+                        <?php else: ?>
+                        <?= htmlspecialchars($t['numero']) ?>
+                        <?php endif; ?>
+                    </span>
                     <?php endif; ?>
                 </div>
                 <?php if ($t['notas']): ?>

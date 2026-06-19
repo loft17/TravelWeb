@@ -163,6 +163,7 @@ CREATE TABLE IF NOT EXISTS transportes (
     hora_llegada TIME         DEFAULT NULL,
     numero       VARCHAR(100) DEFAULT NULL,
     notas        TEXT         DEFAULT NULL,
+    escalas      TEXT         DEFAULT NULL,
     viaje_id     INT          NOT NULL DEFAULT 1,
     created_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
