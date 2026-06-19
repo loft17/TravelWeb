@@ -24,11 +24,16 @@ $conn->close();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Se utiliza el título obtenido desde la base de datos -->
+  <meta name="theme-color" content="#ffffff" id="theme-color-meta">
+  <link rel="manifest" href="/plan/manifest.json">
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
   <title><?php echo htmlspecialchars($site_title); ?></title>
-  <!-- Google Fonts: Gidole -->
   <link href="https://fonts.googleapis.com/css2?family=Gidole&display=swap" rel="stylesheet">
-  <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -43,6 +48,9 @@ $conn->close();
         <span style="font-size:.75em;color:#71717a;"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
         <a href="/plan/logout.php" style="font-size:.75em;color:#71717a;text-decoration:none;border:1px solid #ddd;padding:3px 8px;border-radius:4px;">Salir</a>
       <?php endif; ?>
+      <button id="dark-toggle" class="dark-btn" title="Cambiar tema" aria-label="Cambiar tema">
+        <span class="material-icons" id="dark-icon">dark_mode</span>
+      </button>
       <label for="menu-toggle" class="menu-btn">
         <span></span>
         <span></span>
@@ -58,10 +66,11 @@ $conn->close();
       <label for="menu-toggle" class="close-btn">Cerrar</label>
     </div>
     <nav>
-      <a href="#">Inicio</a>
-      <a href="#">Acerca</a>
-      <a href="#">Entradas</a>
-      <a href="#">Contacto</a>
+      <a href="/plan/index.php">Hoy</a>
+      <a href="/plan/comida.php">Gastronomía</a>
+      <a href="/plan/transportes.php">Traslados</a>
+      <a href="/plan/calendario.php">Calendario</a>
+      <a href="/plan/buscar.php">Buscar</a>
     </nav>
   </div>
 </body>

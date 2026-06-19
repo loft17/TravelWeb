@@ -3,6 +3,19 @@ include 'includes/protect.php';
 include 'includes/header.php';
 include 'includes/functions.php';
 ?>
+<script>
+(function () {
+    var p = new URLSearchParams(window.location.search);
+    if (!p.has('fecha')) {
+        var d = new Date();
+        var fecha = d.getFullYear() + '-' +
+            String(d.getMonth() + 1).padStart(2, '0') + '-' +
+            String(d.getDate()).padStart(2, '0');
+        p.set('fecha', fecha);
+        window.location.replace('?' + p.toString());
+    }
+})();
+</script>
 
 <body>
 
@@ -10,6 +23,46 @@ include 'includes/functions.php';
     <div class="content">
         <!-- Fecha visible antes de la primera entrada -->
         <div class="fecha"><?php echo date('d/m/Y', strtotime($fecha)); ?></div>
+
+        <?php
+        $iconos_t = [
+            'avion'  => 'flight',
+            'bus'    => 'directions_bus',
+            'tren'   => 'train',
+            'ferry'  => 'directions_boat',
+            'taxi'   => 'local_taxi',
+            'coche'  => 'directions_car',
+            'otro'   => 'route',
+        ];
+        foreach ($transportes_dia as $t):
+        ?>
+        <div class="transp-card">
+            <div class="transp-tipo">
+                <span class="material-icons"><?= $iconos_t[$t['tipo']] ?? 'route' ?></span>
+            </div>
+            <div class="transp-info">
+                <div class="transp-ruta">
+                    <?= htmlspecialchars($t['origen']) ?>
+                    <span class="material-icons transp-arrow">arrow_forward</span>
+                    <?= htmlspecialchars($t['destino']) ?>
+                </div>
+                <div class="transp-meta">
+                    <?php if ($t['hora_salida']): ?>
+                    <span><?= substr($t['hora_salida'], 0, 5) ?></span>
+                    <?php endif; ?>
+                    <?php if ($t['hora_llegada']): ?>
+                    <span>→ <?= substr($t['hora_llegada'], 0, 5) ?></span>
+                    <?php endif; ?>
+                    <?php if ($t['numero']): ?>
+                    <span class="transp-num"><?= htmlspecialchars($t['numero']) ?></span>
+                    <?php endif; ?>
+                </div>
+                <?php if ($t['notas']): ?>
+                <div class="transp-notas"><?= htmlspecialchars($t['notas']) ?></div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
 
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>

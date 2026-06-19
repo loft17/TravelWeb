@@ -1,3 +1,27 @@
+// ── Dark mode toggle ──
+(function () {
+    var btn  = document.getElementById('dark-toggle');
+    var icon = document.getElementById('dark-icon');
+    if (!btn) return;
+    var theme = localStorage.getItem('theme') || 'light';
+    icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+    btn.addEventListener('click', function () {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+        var meta = document.getElementById('theme-color-meta');
+        if (meta) meta.content = theme === 'dark' ? '#161616' : '#ffffff';
+    });
+})();
+
+// ── Service Worker ──
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/plan/sw.js', { scope: '/plan/' });
+    });
+}
+
 // Script para que solo un <details> esté abierto a la vez
 document.querySelectorAll('details').forEach((targetDetail) => {
     targetDetail.addEventListener("toggle", (event) => {

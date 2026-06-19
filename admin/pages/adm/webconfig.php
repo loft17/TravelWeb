@@ -7,10 +7,10 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/config_web.php';
 
 // Ejecutamos la función que procesa la actualización (si se envía el formulario)
 // y obtiene los valores actuales.
-$configData = process_config_web();
-$fields = $configData['fields'];
+$configData    = process_config_web();
+$fields        = $configData['fields'];
 $currentValues = $configData['currentValues'];
-$notification = isset($configData['notification']) ? $configData['notification'] : '';
+$notification  = $configData['notification'] ?? '';
 ?>
 
 <!doctype html>
@@ -42,6 +42,7 @@ $notification = isset($configData['notification']) ? $configData['notification']
                                             <input class="form-control" type="text" id="<?php echo $key; ?>" name="<?php echo $key; ?>" value="<?php echo isset($currentValues[$key]) ? htmlspecialchars($currentValues[$key]) : ''; ?>" required>
                                         </div>
                                     <?php endforeach; ?>
+
                                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                                 </form>
 

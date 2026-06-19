@@ -10,16 +10,18 @@ $viajeActivoId     = get_viaje_activo_id();
 $activePage = basename($_SERVER['SCRIPT_FILENAME'], '.php');
 
 // Definir los arrays de páginas para cada grupo del menú
-$atraccionesPages = ['add-atraccion', 'show-atraccions', 'planning', 'mapa', 'reset-seen-attractions', 'reset-active-attractions'];
-$platosPages      = ['add-food', 'show-foods', 'change-food'];
-$utilidadesPages  = ['task', 'maleta', 'emojis', 'gastos'];
-$ficherosPages    = ['show-imgs', 'upload-imgs'];
-$bbddPages        = ['export-json', 'export-sql'];
+$atraccionesPages    = ['add-atraccion', 'show-atraccions', 'planning', 'mapa', 'reset-seen-attractions', 'reset-active-attractions'];
+$platosPages         = ['add-food', 'show-foods', 'change-food'];
+$transportesPages    = ['show-transportes'];
+$utilidadesPages     = ['task', 'maleta', 'emojis', 'gastos'];
+$ficherosPages       = ['show-imgs', 'upload-imgs'];
+$bbddPages           = ['export-json', 'export-sql'];
 $administracionPages = ['show-users', 'webconfig', 'activity-log', 'sessions', 'viajes'];
 
 // Determinar si cada grupo está activo
 $atraccionesActive   = in_array($activePage, $atraccionesPages) ? 'active' : '';
 $platosActive        = in_array($activePage, $platosPages) ? 'active' : '';
+$transportesActive   = in_array($activePage, $transportesPages) ? 'active' : '';
 $utilidadesActive    = in_array($activePage, $utilidadesPages) ? 'active' : '';
 $ficherosActive      = in_array($activePage, $ficherosPages) ? 'active' : '';
 $bbddActive          = in_array($activePage, $bbddPages) ? 'active' : '';
@@ -36,22 +38,44 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
     <!-- Selector de viaje -->
     <div class="sidebar-viaje-selector">
         <span class="sidebar-viaje-label">Viaje activo</span>
-        <div class="sidebar-viaje-select-wrap">
-            <i class="fa fa-map-marked-alt sidebar-viaje-icon"></i>
-            <select class="sidebar-viaje-select"
-                    onchange="if(this.value) window.location='/admin/switch-viaje.php?id='+this.value">
+        <div class="svs-wrap" id="svs-wrap">
+            <button class="svs-trigger" id="svs-trigger" type="button">
+                <i class="fa fa-map-marked-alt svs-icon"></i>
+                <span class="svs-current"><?= htmlspecialchars($viajeActualNombre) ?></span>
+                <i class="fa fa-chevron-down svs-chevron"></i>
+            </button>
+            <ul class="svs-menu" id="svs-menu" role="listbox">
                 <?php foreach ($todosLosViajes as $v): ?>
-                <option value="<?= (int)$v['id'] ?>" <?= (int)$v['id'] === $viajeActivoId ? 'selected' : '' ?>>
+                <li class="svs-item <?= (int)$v['id'] === $viajeActivoId ? 'svs-item--active' : '' ?>"
+                    role="option"
+                    data-href="/admin/switch-viaje.php?id=<?= (int)$v['id'] ?>">
                     <?= htmlspecialchars($v['nombre']) ?>
-                </option>
+                </li>
                 <?php endforeach; ?>
-            </select>
-            <i class="fa fa-chevron-down sidebar-viaje-chevron"></i>
+            </ul>
         </div>
         <a href="/admin/pages/adm/viajes.php" class="sidebar-viaje-manage">
             <i class="fa fa-plus"></i> Gestionar viajes
         </a>
     </div>
+    <script>
+    (function () {
+        var wrap    = document.getElementById('svs-wrap');
+        var trigger = document.getElementById('svs-trigger');
+        trigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            wrap.classList.toggle('open');
+        });
+        document.addEventListener('click', function () {
+            wrap.classList.remove('open');
+        });
+        document.querySelectorAll('.svs-item').forEach(function (item) {
+            item.addEventListener('click', function () {
+                window.location = this.dataset.href;
+            });
+        });
+    })();
+    </script>
     <div class="main-menu">
         <div class="menu-inner">
             <nav>
@@ -101,6 +125,18 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                             </li>
                             <li class="<?= $activePage=='change-food'?'active':'' ?>">
                                 <a href="/admin/pages/comida/change-food.php">Cambiar estado</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="<?= $transportesActive ?>">
+                        <a href="javascript:void(0)">
+                            <i class="fa fa-route"></i>
+                            <span>Transportes</span>
+                        </a>
+                        <ul class="<?= $transportesActive ?>">
+                            <li class="<?= $activePage=='show-transportes'?'active':'' ?>">
+                                <a href="/admin/pages/transportes/show-transportes.php">Ver traslados</a>
                             </li>
                         </ul>
                     </li>

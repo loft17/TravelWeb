@@ -87,7 +87,7 @@ body {
 
 /* ── Trip selector ────────────────────────────────── */
 .sidebar-viaje-selector {
-  padding: 10px 12px 10px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--sidebar-border);
 }
 
@@ -102,47 +102,83 @@ body {
   margin-bottom: 5px;
 }
 
-.sidebar-viaje-select-wrap {
-  position: relative;
+/* Custom dropdown */
+.svs-wrap { position: relative; }
+
+.svs-trigger {
+  width: 100%;
   display: flex;
   align-items: center;
+  gap: 8px;
   background: var(--muted);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.sidebar-viaje-icon {
-  padding: 0 8px;
-  font-size: 12px;
-  color: var(--muted-fg);
-  pointer-events: none;
-  flex-shrink: 0;
-}
-
-.sidebar-viaje-select {
-  flex: 1;
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: none;
-  outline: none;
+  padding: 6px 10px;
+  cursor: pointer;
   font-size: 12px;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   color: var(--fg);
-  padding: 6px 28px 6px 0;
-  cursor: pointer;
-  min-width: 0;
+  text-align: left;
+  transition: background .15s;
+}
+.svs-trigger:hover { background: var(--sidebar-hover); }
+
+.svs-icon {
+  font-size: 12px;
+  color: var(--muted-fg);
+  flex-shrink: 0;
 }
 
-.sidebar-viaje-chevron {
-  position: absolute;
-  right: 8px;
+.svs-current {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.svs-chevron {
   font-size: 9px;
   color: var(--muted-fg);
-  pointer-events: none;
+  flex-shrink: 0;
+  transition: transform .15s;
 }
+.svs-wrap.open .svs-chevron { transform: rotate(180deg); }
+
+.svs-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  z-index: 300;
+}
+.svs-wrap.open .svs-menu { display: block; }
+
+.svs-item {
+  padding: 6px 10px;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: var(--fg);
+  cursor: pointer;
+  transition: background .1s;
+}
+.svs-item:hover { background: var(--accent); }
+
+.svs-item--active {
+  background: var(--primary);
+  color: var(--primary-fg);
+  font-weight: 500;
+}
+.svs-item--active:hover { background: var(--primary); }
 
 .sidebar-viaje-manage {
   display: block;

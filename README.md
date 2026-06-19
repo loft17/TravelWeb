@@ -1,58 +1,81 @@
-# Pendientes:
-- Notificaciones al editar comida, atracciones, utilidades, ficheros...
-- Cambiar diseño del header.php
-- Modificar el desplegable del usuario loegado para poder editar sus opciones
-- Crear la pagina de la entrada.
-- Revisar el fichero install.php
+# TravelGuide
 
-# Puesta en Marcha
-## Instalacion
+Aplicación web en PHP + MySQL para gestionar y publicar guías de viaje. Incluye panel de administración para organizar atracciones, restaurantes, ficheros y herramientas, y una vista pública para consultar el plan del viaje.
+
+## Estructura
+
 ```
-git clone https://github.com/loft17/TravelGuide.git
+/admin      → Panel de administración (atracciones, comida, ficheros, herramientas)
+/plan       → Vista pública del viaje con calendario
+/content    → Subidas de imágenes y archivos
+config.php  → Configuración de base de datos y URL
 ```
 
-## Requisitos:
-```
+## Requisitos
+
+- PHP con extensión `mbstring`
+- MySQL / MariaDB
+- Servidor web (Apache / Nginx)
+
+```bash
 apt install php-mbstring
 ```
 
+## Instalación
 
-## Configuración
-### Creamos la base de datos y damos permisos:
-Nos conectamos a la base de datos para crear el usuario y la tabla:
-```
-mysql -u root -p
+```bash
+git clone https://github.com/loft17/TravelGuide.git
 ```
 
-```
+### Base de datos
+
+```sql
 CREATE DATABASE travel_db;
-GRANT ALL PRIVILEGES ON travel_db.* TO "travel_user"@"localhost" IDENTIFIED BY "pruebas";
+GRANT ALL PRIVILEGES ON travel_db.* TO 'travel_user'@'localhost' IDENTIFIED BY 'tu_password';
 ```
 
-Modificamos el fichero config.php y modificamos los parametros:
-```
-define('URL_WEB', 'http://travelpre.joseromera.net');
+### Configuración
+
+Edita `config.php` con los valores de tu entorno:
+
+```php
+define('TITLE_WEB', 'MiViaje');
+define('URL_WEB',   'http://tu-dominio.com');
+define('VIAJE_ID',  1);
 
 define('DB_HOST', 'localhost');
-define('DB_USER', 'usuario');
-define('DB_PASS', 'password'); // Cambia por tu contraseña
-define('DB_NAME', 'base_de_datos');
+define('DB_USER', 'travel_user');
+define('DB_PASS', 'tu_password');
+define('DB_NAME', 'travel_db');
 ```
 
-### Permisos
-Damos los permisos adecuados para pode subir imagenes:
-```
-chown -R www-data:www-data /srv/www/travelweb/public_html/content/
-chmod -R 775 /srv/www/travelweb/public_html/content/
+### Permisos de subida
+
+```bash
+chown -R www-data:www-data /var/www/travel/content/
+chmod -R 775 /var/www/travel/content/
 ```
 
-## Accediendo:
-Ahora vamos a la url para iniciar la configuracion final y poder conectar:
+### Instalación inicial
+
+Accede al asistente de instalación para crear las tablas y el usuario administrador:
+
 ```
-http://localhost/admin/install.php
+http://tu-dominio.com/admin/install.php
 ```
 
-# Contribuciones
+## Acceso
+
+| Ruta | Descripción |
+|------|-------------|
+| `/admin` | Panel de administración |
+| `/plan` | Vista pública del viaje |
+
+## Contribuciones
+
 - **[SRTdash admin dashboard](https://github.com/puikinsh/srtdash-admin-dashboard)** de puikinsh
+- **[TCPDF](https://tcpdf.org/)** para generación de PDF
 
-# v2025.03.14
+## Versión
+
+v2026.06.19

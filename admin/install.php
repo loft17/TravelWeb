@@ -152,6 +152,20 @@ CREATE TABLE IF NOT EXISTS user_sessions (
     last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uq_token (session_token)
 );
+
+CREATE TABLE IF NOT EXISTS transportes (
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    tipo         VARCHAR(50)  NOT NULL DEFAULT 'avion',
+    origen       VARCHAR(255) NOT NULL,
+    destino      VARCHAR(255) NOT NULL,
+    fecha        DATE         NOT NULL,
+    hora_salida  TIME         DEFAULT NULL,
+    hora_llegada TIME         DEFAULT NULL,
+    numero       VARCHAR(100) DEFAULT NULL,
+    notas        TEXT         DEFAULT NULL,
+    viaje_id     INT          NOT NULL DEFAULT 1,
+    created_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ";
 
 if (!$conn->multi_query($sql)) {
@@ -196,8 +210,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mensaje = "<div class='message error'>⚠️ El usuario ya existe.</div>";
     }
 
-    // Crear viaje por defecto si no existe
-    $conn->query("INSERT INTO viajes (nombre, destino) SELECT 'Mi Viaje', '' FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM viajes LIMIT 1)");
+    // Crear viaje por defecto si no existe (con fechas para que la selección automática funcione)
+    $conn->query("INSERT INTO viajes (nombre, destino, fecha_inicio, fecha_fin) SELECT 'Mi Viaje', '', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY) FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM viajes LIMIT 1)");
 
     // Insertar configuración inicial
     $conn->query("INSERT INTO configurations (config_key, config_value) VALUES ('installed', '1') ON DUPLICATE KEY UPDATE config_value = '1'");
