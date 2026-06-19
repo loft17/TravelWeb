@@ -9,7 +9,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/planning.php';
 <html class="no-js" lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Calendario - <?php echo TITLE_WEB; ?></title>
+    <title>Calendario</title>
     <!-- Incluir CSS de Bootstrap y Quill -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>

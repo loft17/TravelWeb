@@ -9,10 +9,8 @@ $fecha = isset($_GET['fecha']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['fec
     ? $_GET['fecha']
     : date('Y-m-d');
 
-// Viaje público: BD tiene prioridad sobre la constante de config.php
-$_r = $conn->query("SELECT config_value FROM configurations WHERE config_key = 'viaje_id_public' LIMIT 1");
-$viaje_id = ($_r && $row_cfg = $_r->fetch_assoc()) ? (int)$row_cfg['config_value'] : (int)VIAJE_ID;
-unset($_r, $row_cfg);
+// Viaje público: selección automática por fecha
+include_once __DIR__ . '/viaje.php';
 
 $sql = "SELECT * FROM atracciones WHERE activo = TRUE AND viaje_id = ? AND fecha = ? ORDER BY orden ASC";
 $stmt = $conn->prepare($sql);

@@ -1,9 +1,5 @@
 <?php
 
-defined('TITLE_WEB') || define('TITLE_WEB', 'Thai25');
-defined('URL_WEB')   || define('URL_WEB',   'http://192.168.0.118');
-defined('VIAJE_ID')  || define('VIAJE_ID',  2); // ID del viaje a mostrar en la web pública
-
 defined('DB_HOST') || define('DB_HOST', 'localhost');
 defined('DB_USER') || define('DB_USER', 'travel_user');
 defined('DB_PASS') || define('DB_PASS', 'pruebas');

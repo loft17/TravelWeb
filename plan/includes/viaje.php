@@ -27,7 +27,7 @@ if (!isset($viaje_id)) {
                 "SELECT id FROM viajes WHERE activo = 1
                  ORDER BY fecha_fin DESC LIMIT 1"
             );
-            $viaje_id = ($_r && $_row = $_r->fetch_assoc()) ? (int)$_row['id'] : (int)VIAJE_ID;
+            $viaje_id = ($_r && $_row = $_r->fetch_assoc()) ? (int)$_row['id'] : 1;
         }
     }
     unset($_r, $_row, $today);

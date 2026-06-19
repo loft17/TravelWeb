@@ -9,13 +9,7 @@ $conn = conectar_bd();
 $sql = "SELECT config_value FROM configurations WHERE config_key = 'title_web' LIMIT 1";
 $result = $conn->query($sql);
 
-// Valor por defecto (el definido en la constante) en caso de que no se encuentre en la BD
-$site_title = TITLE_WEB;
-
-if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $site_title = $row['config_value'];
-}
+$site_title = ($result && $row = $result->fetch_assoc()) ? $row['config_value'] : 'TravelGuide';
 
 $conn->close();
 ?>

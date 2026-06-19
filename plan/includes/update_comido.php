@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_POST['action'] ?? '') !== 'toggl
 $id       = intval($_POST['id'] ?? 0);
 $comido   = ($_POST['comido'] ?? 'false') === 'true';
 $newValue = $comido ? 0 : 1;
-$viaje_id = (int)VIAJE_ID;
 
 $conn = conectar_bd();
+include_once __DIR__ . '/viaje.php';
 $stmt = $conn->prepare("UPDATE comida SET comido = ? WHERE id = ? AND viaje_id = ?");
 $stmt->bind_param('iii', $newValue, $id, $viaje_id);
 $stmt->execute();

@@ -1,15 +1,45 @@
 # TravelGuide
 
-Aplicación web en PHP + MySQL para gestionar y publicar guías de viaje. Incluye panel de administración para organizar atracciones, restaurantes, ficheros y herramientas, y una vista pública para consultar el plan del viaje.
+Aplicación web en PHP + MySQL para gestionar y publicar guías de viaje. Incluye panel de administración para organizar atracciones, restaurantes, traslados y herramientas, y una vista pública PWA para consultar el plan del viaje desde el móvil.
 
 ## Estructura
 
 ```
-/admin      → Panel de administración (atracciones, comida, ficheros, herramientas)
-/plan       → Vista pública del viaje con calendario
+/admin      → Panel de administración
+/plan       → Vista pública del viaje (PWA)
 /content    → Subidas de imágenes y archivos
-config.php  → Configuración de base de datos y URL
+config.php  → Configuración de base de datos
 ```
+
+## Funcionalidades
+
+### Vista pública `/plan`
+
+| Sección | Descripción |
+|---------|-------------|
+| **Hoy** | Atracciones y traslados del día, calculados con la fecha del dispositivo |
+| **Gastronomía** | Lista de restaurantes con puntuación y marcado de visitados |
+| **Traslados** | Todos los traslados del viaje agrupados por fecha |
+| **Calendario** | Vista mensual con días que tienen plan o transporte |
+| **Buscar** | Búsqueda de atracciones, restaurantes y traslados |
+| **Dark mode** | Toggle en el header, persiste en `localStorage` |
+| **PWA** | Instalable en móvil, funciona offline con service worker |
+
+**Cambio automático de viaje:** la web detecta qué viaje mostrar según la fecha actual. Si hoy está dentro del rango `fecha_inicio–fecha_fin` de un viaje, ese es el activo. Si no, muestra el próximo viaje programado.
+
+### Panel de administración `/admin`
+
+| Sección | Descripción |
+|---------|-------------|
+| **Viajes** | Crear y editar viajes con fechas obligatorias. Valida solapamiento de fechas. Muestra qué viaje está activo en la web |
+| **Atracciones** | Gestión de atracciones por día y viaje |
+| **Comida** | Restaurantes con puntuación y estado visitado |
+| **Traslados** | Vuelos, trenes, buses, ferries y otros traslados |
+| **Maleta** | Lista de equipaje por categoría y peso |
+| **Gastos** | Control de gastos por categoría y divisa |
+| **Tareas** | Tareas de preparación del viaje |
+| **Configuración web** | Título y pie de página del sitio |
+| **Configuración de cuenta** | Perfil y contraseña del usuario |
 
 ## Requisitos
 
@@ -36,13 +66,9 @@ GRANT ALL PRIVILEGES ON travel_db.* TO 'travel_user'@'localhost' IDENTIFIED BY '
 
 ### Configuración
 
-Edita `config.php` con los valores de tu entorno:
+Edita `config.php` con los datos de conexión a la base de datos:
 
 ```php
-define('TITLE_WEB', 'MiViaje');
-define('URL_WEB',   'http://tu-dominio.com');
-define('VIAJE_ID',  1);
-
 define('DB_HOST', 'localhost');
 define('DB_USER', 'travel_user');
 define('DB_PASS', 'tu_password');
@@ -63,6 +89,8 @@ Accede al asistente de instalación para crear las tablas y el usuario administr
 ```
 http://tu-dominio.com/admin/install.php
 ```
+
+El asistente crea todas las tablas necesarias (incluida `transportes`) y un viaje de ejemplo con fechas por defecto.
 
 ## Acceso
 
