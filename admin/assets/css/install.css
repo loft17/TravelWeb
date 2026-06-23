@@ -100,3 +100,77 @@ button:active{transform:scale(.98)}
   color:#c0392b;
   border:1px solid #f5c6c6;
 }
+
+.message.warn{
+  background:#fffbea;
+  color:#92610a;
+  border:1px solid #f5e0a0;
+}
+
+/* ── Checks ─────────────────────────────────────────────────────────────── */
+.container--wide{ max-width:580px }
+
+.checks{
+  display:flex;
+  flex-direction:column;
+  gap:.45rem;
+}
+
+.check-row{
+  display:flex;
+  align-items:flex-start;
+  gap:.75rem;
+  padding:.55rem .75rem;
+  border-radius:8px;
+  font-size:.82rem;
+  line-height:1.4;
+}
+
+.check-ok  { background:#f0fdf6; border:1px solid #c3ead4; }
+.check-fail{ background:#fff4f4; border:1px solid #f5c6c6; }
+.check-warn{ background:#fffbea; border:1px solid #f5e0a0; }
+
+.check-icon{
+  flex-shrink:0;
+  font-size:.95rem;
+  margin-top:.05rem;
+  font-weight:700;
+  width:1.1em;
+  text-align:center;
+}
+.check-ok   .check-icon{ color:#1e7a44 }
+.check-fail .check-icon{ color:#c0392b }
+.check-warn .check-icon{ color:#92610a }
+
+.check-body{
+  display:flex;
+  flex-direction:column;
+  gap:.18rem;
+  min-width:0;
+}
+
+.check-label{
+  font-weight:600;
+  color:#1e2030;
+}
+.check-ok   .check-label{ color:#1e7a44 }
+.check-fail .check-label{ color:#c0392b }
+.check-warn .check-label{ color:#92610a }
+
+.check-detail{
+  color:#7a7f99;
+  font-size:.78rem;
+}
+
+.check-fix{
+  margin-top:.1rem;
+  font-size:.76rem;
+  color:#555;
+}
+.check-fix code{
+  background:#f1f2f8;
+  padding:.1rem .35rem;
+  border-radius:4px;
+  font-family:monospace;
+  word-break:break-all;
+}

@@ -2857,3 +2857,24 @@ table.dataTable thead td {
     color: red;
     font-size: 16px;
 }
+/* ── Transportes form hints ── */
+.tr-section-hdr {
+    font-size: .78em;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+.tr-section-hint {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    color: #aaa;
+}
+.tr-section-note {
+    font-size: .8em;
+    color: #856404;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 6px;
+    padding: 5px 10px;
+}

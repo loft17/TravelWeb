@@ -12,7 +12,7 @@ $activePage = basename($_SERVER['SCRIPT_FILENAME'], '.php');
 // Definir los arrays de páginas para cada grupo del menú
 $atraccionesPages    = ['add-atraccion', 'show-atraccions', 'planning', 'mapa', 'reset-seen-attractions', 'reset-active-attractions'];
 $platosPages         = ['add-food', 'show-foods', 'change-food'];
-$transportesPages    = ['show-transportes'];
+$transportesPages    = ['show-transportes', 'show-aerolineas'];
 $utilidadesPages     = ['task', 'maleta', 'emojis', 'gastos'];
 $ficherosPages       = ['show-imgs', 'upload-imgs'];
 $bbddPages           = ['export-json', 'export-sql'];
@@ -137,6 +137,9 @@ $administracionActive = in_array($activePage, $administracionPages) ? 'active' :
                         <ul class="<?= $transportesActive ?>">
                             <li class="<?= $activePage=='show-transportes'?'active':'' ?>">
                                 <a href="/admin/pages/transportes/show-transportes.php">Ver traslados</a>
+                            </li>
+                            <li class="<?= $activePage=='show-aerolineas'?'active':'' ?>">
+                                <a href="/admin/pages/aerolineas/show-aerolineas.php">Aerolíneas</a>
                             </li>
                         </ul>
                     </li>

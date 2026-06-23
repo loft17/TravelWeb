@@ -19,8 +19,16 @@ function _ensure_transportes_table(): void {
         viaje_id     INT          NOT NULL DEFAULT 1,
         created_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    // Migración: añadir columna si la tabla ya existía sin ella
+    // Migraciones: añadir columnas si la tabla ya existía sin ellas
     $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS escalas TEXT DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS fecha_llegada DATE DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS duracion VARCHAR(50) DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS ciudad_origen VARCHAR(100) DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS aeropuerto_origen VARCHAR(150) DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS ciudad_destino VARCHAR(100) DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS aeropuerto_destino VARCHAR(150) DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS aerolinea_id INT DEFAULT NULL");
+    $conn->query("ALTER TABLE transportes ADD COLUMN IF NOT EXISTS compania VARCHAR(150) DEFAULT NULL");
     $conn->close();
 }
 _ensure_transportes_table();
@@ -36,10 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $origen       = trim($_POST['origen']       ?? '');
         $destino      = trim($_POST['destino']      ?? '');
         $fecha        = trim($_POST['fecha']        ?? '');
-        $hora_salida  = trim($_POST['hora_salida']  ?? '') ?: null;
-        $hora_llegada = trim($_POST['hora_llegada'] ?? '') ?: null;
-        $numero       = trim($_POST['numero']       ?? '') ?: null;
-        $notas        = trim($_POST['notas']        ?? '') ?: null;
+        $hora_salida   = trim($_POST['hora_salida']   ?? '') ?: null;
+        $hora_llegada  = trim($_POST['hora_llegada']  ?? '') ?: null;
+        $fecha_llegada = trim($_POST['fecha_llegada'] ?? '') ?: null;
+        $duracion      = trim($_POST['duracion']      ?? '') ?: null;
+        $numero        = trim($_POST['numero']        ?? '') ?: null;
+        $notas         = trim($_POST['notas']         ?? '') ?: null;
+        $ciudad_origen      = trim($_POST['ciudad_origen']      ?? '') ?: null;
+        $aeropuerto_origen  = trim($_POST['aeropuerto_origen']  ?? '') ?: null;
+        $ciudad_destino     = trim($_POST['ciudad_destino']     ?? '') ?: null;
+        $aeropuerto_destino = trim($_POST['aeropuerto_destino'] ?? '') ?: null;
+        $aerolinea_id       = intval($_POST['aerolinea_id']     ?? 0)  ?: null;
+        $compania           = trim($_POST['compania']           ?? '') ?: null;
 
         // Escalas: array de paradas intermedias enviadas por JS
         $escalas = null;
@@ -49,13 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $aeropuerto = trim($e['aeropuerto'] ?? '');
                 if ($aeropuerto === '') continue;
                 $lista[] = [
-                    'aeropuerto'       => $aeropuerto,
-                    'hora_llegada'     => trim($e['hora_llegada']     ?? ''),
-                    'duracion_escala'  => trim($e['duracion_escala']  ?? ''),
-                    'hora_salida'      => trim($e['hora_salida']      ?? ''),
-                    'numero'           => trim($e['numero']           ?? ''),
-                    'destino_sig'      => trim($e['destino_sig']      ?? ''),
-                    'hora_llegada_sig' => trim($e['hora_llegada_sig'] ?? ''),
+                    'aeropuerto'            => $aeropuerto,
+                    'duracion_escala'       => trim($e['duracion_escala']       ?? ''),
+                    'duracion'              => trim($e['duracion']              ?? ''),
+                    'numero'                => trim($e['numero']                ?? ''),
+                    'fecha_salida'          => trim($e['fecha_salida']          ?? ''),
+                    'hora_salida'           => trim($e['hora_salida']           ?? ''),
+                    'destino_sig'           => trim($e['destino_sig']           ?? ''),
+                    'fecha_llegada_sig'     => trim($e['fecha_llegada_sig']     ?? ''),
+                    'hora_llegada_sig'      => trim($e['hora_llegada_sig']      ?? ''),
+                    'ciudad'                => trim($e['ciudad']                ?? ''),
+                    'aeropuerto_nombre'     => trim($e['aeropuerto_nombre']     ?? ''),
+                    'ciudad_sig'            => trim($e['ciudad_sig']            ?? ''),
+                    'aeropuerto_nombre_sig' => trim($e['aeropuerto_nombre_sig'] ?? ''),
+                    'aerolinea_id'          => intval($e['aerolinea_id']        ?? 0) ?: null,
                 ];
             }
             if (!empty($lista)) $escalas = json_encode($lista, JSON_UNESCAPED_UNICODE);
@@ -66,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $conn = conectar_bd();
             $stmt = $conn->prepare(
-                "INSERT INTO transportes (tipo,origen,destino,fecha,hora_salida,hora_llegada,numero,notas,escalas,viaje_id)
-                 VALUES (?,?,?,?,?,?,?,?,?,?)"
+                "INSERT INTO transportes (tipo,origen,destino,fecha,hora_salida,hora_llegada,fecha_llegada,duracion,numero,notas,escalas,ciudad_origen,aeropuerto_origen,ciudad_destino,aeropuerto_destino,aerolinea_id,compania,viaje_id)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
             );
-            $stmt->bind_param('sssssssssi', $tipo, $origen, $destino, $fecha, $hora_salida, $hora_llegada, $numero, $notas, $escalas, $viaje_id);
+            $stmt->bind_param('sssssssssssssssisi', $tipo, $origen, $destino, $fecha, $hora_salida, $hora_llegada, $fecha_llegada, $duracion, $numero, $notas, $escalas, $ciudad_origen, $aeropuerto_origen, $ciudad_destino, $aeropuerto_destino, $aerolinea_id, $compania, $viaje_id);
             $stmt->execute();
             $stmt->close();
             $conn->close();
@@ -84,10 +107,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $origen       = trim($_POST['origen']       ?? '');
         $destino      = trim($_POST['destino']      ?? '');
         $fecha        = trim($_POST['fecha']        ?? '');
-        $hora_salida  = trim($_POST['hora_salida']  ?? '') ?: null;
-        $hora_llegada = trim($_POST['hora_llegada'] ?? '') ?: null;
-        $numero       = trim($_POST['numero']       ?? '') ?: null;
-        $notas        = trim($_POST['notas']        ?? '') ?: null;
+        $hora_salida   = trim($_POST['hora_salida']   ?? '') ?: null;
+        $hora_llegada  = trim($_POST['hora_llegada']  ?? '') ?: null;
+        $fecha_llegada = trim($_POST['fecha_llegada'] ?? '') ?: null;
+        $duracion      = trim($_POST['duracion']      ?? '') ?: null;
+        $numero        = trim($_POST['numero']        ?? '') ?: null;
+        $notas         = trim($_POST['notas']         ?? '') ?: null;
+        $ciudad_origen      = trim($_POST['ciudad_origen']      ?? '') ?: null;
+        $aeropuerto_origen  = trim($_POST['aeropuerto_origen']  ?? '') ?: null;
+        $ciudad_destino     = trim($_POST['ciudad_destino']     ?? '') ?: null;
+        $aeropuerto_destino = trim($_POST['aeropuerto_destino'] ?? '') ?: null;
+        $aerolinea_id       = intval($_POST['aerolinea_id']     ?? 0)  ?: null;
+        $compania           = trim($_POST['compania']           ?? '') ?: null;
 
         $escalas = null;
         if (!empty($_POST['escalas']) && is_array($_POST['escalas'])) {
@@ -96,13 +127,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $aeropuerto = trim($e['aeropuerto'] ?? '');
                 if ($aeropuerto === '') continue;
                 $lista[] = [
-                    'aeropuerto'       => $aeropuerto,
-                    'hora_llegada'     => trim($e['hora_llegada']     ?? ''),
-                    'duracion_escala'  => trim($e['duracion_escala']  ?? ''),
-                    'hora_salida'      => trim($e['hora_salida']      ?? ''),
-                    'numero'           => trim($e['numero']           ?? ''),
-                    'destino_sig'      => trim($e['destino_sig']      ?? ''),
-                    'hora_llegada_sig' => trim($e['hora_llegada_sig'] ?? ''),
+                    'aeropuerto'            => $aeropuerto,
+                    'duracion_escala'       => trim($e['duracion_escala']       ?? ''),
+                    'duracion'              => trim($e['duracion']              ?? ''),
+                    'numero'                => trim($e['numero']                ?? ''),
+                    'fecha_salida'          => trim($e['fecha_salida']          ?? ''),
+                    'hora_salida'           => trim($e['hora_salida']           ?? ''),
+                    'destino_sig'           => trim($e['destino_sig']           ?? ''),
+                    'fecha_llegada_sig'     => trim($e['fecha_llegada_sig']     ?? ''),
+                    'hora_llegada_sig'      => trim($e['hora_llegada_sig']      ?? ''),
+                    'ciudad'                => trim($e['ciudad']                ?? ''),
+                    'aeropuerto_nombre'     => trim($e['aeropuerto_nombre']     ?? ''),
+                    'ciudad_sig'            => trim($e['ciudad_sig']            ?? ''),
+                    'aeropuerto_nombre_sig' => trim($e['aeropuerto_nombre_sig'] ?? ''),
+                    'aerolinea_id'          => intval($e['aerolinea_id']        ?? 0) ?: null,
+                    'compania'              => trim($e['compania']              ?? ''),
                 ];
             }
             if (!empty($lista)) $escalas = json_encode($lista, JSON_UNESCAPED_UNICODE);
@@ -111,10 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id > 0 && $origen !== '' && $destino !== '' && $fecha !== '') {
             $conn = conectar_bd();
             $stmt = $conn->prepare(
-                "UPDATE transportes SET tipo=?,origen=?,destino=?,fecha=?,hora_salida=?,hora_llegada=?,numero=?,notas=?,escalas=?
+                "UPDATE transportes SET tipo=?,origen=?,destino=?,fecha=?,hora_salida=?,hora_llegada=?,fecha_llegada=?,duracion=?,numero=?,notas=?,escalas=?,ciudad_origen=?,aeropuerto_origen=?,ciudad_destino=?,aeropuerto_destino=?,aerolinea_id=?,compania=?
                  WHERE id=? AND viaje_id=?"
             );
-            $stmt->bind_param('sssssssssii', $tipo, $origen, $destino, $fecha, $hora_salida, $hora_llegada, $numero, $notas, $escalas, $id, $viaje_id);
+            $stmt->bind_param('sssssssssssssssisii', $tipo, $origen, $destino, $fecha, $hora_salida, $hora_llegada, $fecha_llegada, $duracion, $numero, $notas, $escalas, $ciudad_origen, $aeropuerto_origen, $ciudad_destino, $aeropuerto_destino, $aerolinea_id, $compania, $id, $viaje_id);
             $stmt->execute();
             $stmt->close();
             $conn->close();

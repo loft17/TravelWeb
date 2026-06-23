@@ -32,6 +32,30 @@ if ($tbl_check && $tbl_check->num_rows > 0) {
     $stmt_t->close();
 }
 
+// Load carriers from JSON file (indexed by IATA/company code)
+$carriers_map = [];
+$carriers_json_path = $_SERVER['DOCUMENT_ROOT'] . '/data/carriers.json';
+if (file_exists($carriers_json_path)) {
+    $carriers_raw = json_decode(file_get_contents($carriers_json_path), true) ?? [];
+    foreach ($carriers_raw as $c) {
+        if (!empty($c['codigo'])) {
+            $carriers_map[strtoupper($c['codigo'])] = $c;
+        }
+    }
+}
+
+// Load airlines from DB as fallback for legacy records with aerolinea_id
+$aerolineas_map = [];
+$al_check = $conn->query("SHOW TABLES LIKE 'aerolineas'");
+if ($al_check && $al_check->num_rows > 0) {
+    $al_res = $conn->query("SELECT * FROM aerolineas");
+    if ($al_res) {
+        while ($al_row = $al_res->fetch_assoc()) {
+            $aerolineas_map[$al_row['id']] = $al_row;
+        }
+    }
+}
+
 // Procesar la acción de toggle de "visto"
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_visto') {
     $id = intval($_POST['id']);
