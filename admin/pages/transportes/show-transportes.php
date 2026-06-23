@@ -8,6 +8,15 @@ $iconos = ['avion'=>'fa-plane','bus'=>'fa-bus','tren'=>'fa-train','ferry'=>'fa-s
 require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/functions/aerolineas.php';
 $aerolineas_list = get_aerolineas();
 $aerolineas_map  = array_column($aerolineas_list, null, 'id');
+
+// Carriers JSON para mostrar nombres desde código IATA
+$_carriers_json = $_SERVER['DOCUMENT_ROOT'] . '/data/carriers.json';
+$carriers_by_code = [];
+if (file_exists($_carriers_json)) {
+    foreach (json_decode(file_get_contents($_carriers_json), true) ?? [] as $c) {
+        if (!empty($c['codigo'])) $carriers_by_code[strtoupper($c['codigo'])] = $c;
+    }
+}
 ?>
 <!doctype html>
 <html lang="es">
@@ -68,11 +77,19 @@ $aerolineas_map  = array_column($aerolineas_list, null, 'id');
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <?php if (!empty($t['compania'])): ?>
-                                                <?= htmlspecialchars($t['compania']) ?>
-                                            <?php elseif (!empty($t['aerolinea_id']) && isset($aerolineas_map[$t['aerolinea_id']])): ?>
-                                                <?= htmlspecialchars($aerolineas_map[$t['aerolinea_id']]['nombre']) ?>
-                                            <?php else: ?>–<?php endif; ?>
+                                            <?php
+                                            $carrier_display = '–';
+                                            if (!empty($t['compania'])) {
+                                                $c_info = $carriers_by_code[strtoupper($t['compania'])] ?? null;
+                                                $carrier_display = $c_info ? htmlspecialchars($c_info['nombre']) : htmlspecialchars($t['compania']);
+                                                if ($c_info && !empty($c_info['icono'])) {
+                                                    $carrier_display = '<img src="'.htmlspecialchars($c_info['icono']).'" style="height:16px;object-fit:contain;margin-right:4px" onerror="this.remove()">' . $carrier_display;
+                                                }
+                                            } elseif (!empty($t['aerolinea_id']) && isset($aerolineas_map[$t['aerolinea_id']])) {
+                                                $carrier_display = htmlspecialchars($aerolineas_map[$t['aerolinea_id']]['nombre']);
+                                            }
+                                            echo $carrier_display;
+                                            ?>
                                         </td>
                                         <td><?= htmlspecialchars($t['origen']) ?></td>
                                         <td><?= htmlspecialchars($t['destino']) ?></td>
@@ -194,10 +211,9 @@ function esc(v) { return v ? String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot
 
 function buildEscalaRow(container, idx, data) {
     data = data || {};
-    var lbl = 'style="font-size:.78em;color:#888;text-transform:uppercase;letter-spacing:.05em"';
     var div = document.createElement('div');
-    div.className = 'escala-row border rounded p-2 mb-2';
-    // Carrier value for escala: prefer compania, fall back to airline name from DB
+    div.className = 'escala-row';
+
     var escCompania = data.compania || '';
     if (!escCompania && data.aerolinea_id) {
         var escAl = AEROLINEAS.find(function(a){ return String(a.id) === String(data.aerolinea_id); });
@@ -205,63 +221,91 @@ function buildEscalaRow(container, idx, data) {
     }
 
     div.innerHTML =
-        '<div class="d-flex justify-content-between align-items-center mb-2">' +
-        '  <strong style="font-size:.82em;color:#555">Escala ' + (idx + 1) + '</strong>' +
-        '  <button type="button" class="btn btn-link btn-sm text-danger p-0" onclick="this.closest(\'.escala-row\').remove()">Eliminar</button>' +
-        '</div>' +
-
-        // Escala (layover) + Duración vuelo + Nº vuelo + Aerolínea
-        '<div class="form-row">' +
-        '  <div class="form-group col-3"><label style="font-size:.8em">Escala</label>' +
-        '    <input type="text" name="escalas[' + idx + '][duracion_escala]" class="form-control form-control-sm" placeholder="1h30" value="' + esc(data.duracion_escala) + '"></div>' +
-        '  <div class="form-group col-3"><label style="font-size:.8em">Duración vuelo</label>' +
-        '    <input type="text" name="escalas[' + idx + '][duracion]" class="form-control form-control-sm" placeholder="5h30" value="' + esc(data.duracion) + '"></div>' +
-        '  <div class="form-group col-3"><label style="font-size:.8em">Nº vuelo</label>' +
-        '    <input type="text" name="escalas[' + idx + '][numero]" class="form-control form-control-sm" placeholder="EK317" value="' + esc(data.numero) + '"></div>' +
-        '  <div class="form-group col-3" style="position:relative"><label style="font-size:.8em">Aerolínea</label>' +
-        '    <input type="text" name="escalas[' + idx + '][compania]" class="form-control form-control-sm tr-carrier-input" placeholder="EK" autocomplete="off" value="' + esc(escCompania) + '">' +
-        '    <input type="hidden" name="escalas[' + idx + '][aerolinea_id]" value="">' +
-        '    <div class="tr-carrier-dropdown" style="display:none;position:absolute;z-index:9999;background:#fff;border:1px solid #ced4da;border-radius:4px;width:100%;max-height:180px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.15)"></div>' +
+        // ── Cabecera de la escala
+        '<div class="escala-row-hdr">' +
+        '  <div class="escala-row-title"><i class="fa fa-exchange"></i> Escala ' + (idx + 1) + '</div>' +
+        '  <div class="escala-row-actions">' +
+        '    <span class="escala-wait-label">Tiempo espera</span>' +
+        '    <input type="text" name="escalas[' + idx + '][duracion_escala]" class="form-control form-control-sm escala-wait-input" placeholder="1h30" value="' + esc(data.duracion_escala) + '">' +
+        '    <button type="button" class="escala-remove-btn" onclick="this.closest(\'.escala-row\').remove()" title="Eliminar escala"><i class="fa fa-times"></i></button>' +
         '  </div>' +
         '</div>' +
 
-        // Salida: aeropuerto + fecha + hora en una sola fila
-        '<p class="mb-1" ' + lbl + '>Salida</p>' +
-        '<div class="form-row">' +
-        '  <div class="form-group col-5"><label style="font-size:.8em">Aeropuerto</label>' +
-        '    <input type="text" name="escalas[' + idx + '][aeropuerto]" class="form-control form-control-sm" placeholder="DXB" value="' + esc(data.aeropuerto) + '"></div>' +
-        '  <div class="form-group col-4"><label style="font-size:.8em">Fecha</label>' +
-        '    <input type="date" name="escalas[' + idx + '][fecha_salida]" class="form-control form-control-sm" value="' + esc(data.fecha_salida) + '"></div>' +
-        '  <div class="form-group col-3"><label style="font-size:.8em">Hora</label>' +
-        '    <input type="time" name="escalas[' + idx + '][hora_salida]" class="form-control form-control-sm" value="' + esc(data.hora_salida) + '"></div>' +
-        '</div>' +
-        '<div class="form-row">' +
-        '  <div class="form-group col-12"><label style="font-size:.8em">Ciudad</label>' +
-        '    <input type="text" name="escalas[' + idx + '][ciudad]" class="form-control form-control-sm" placeholder="Ciudad (ej: Dubái)" value="' + esc(data.ciudad) + '"></div>' +
-        '</div>' +
-        '<div class="form-row">' +
-        '  <div class="form-group col-12"><label style="font-size:.8em">Nombre aeropuerto</label>' +
-        '    <input type="text" name="escalas[' + idx + '][aeropuerto_nombre]" class="form-control form-control-sm" placeholder="Aeropuerto Internacional de Dubái" value="' + esc(data.aeropuerto_nombre) + '"></div>' +
+        '<div class="escala-row-body">' +
+
+        // ── Aerolínea + Nº vuelo + Duración
+        '<div class="form-row mb-3">' +
+        '  <div class="form-group col-5 mb-0" style="position:relative">' +
+        '    <label class="tr-field-label">Aerolínea</label>' +
+        '    <input type="text" name="escalas[' + idx + '][compania]" class="form-control form-control-sm tr-carrier-input" placeholder="EK – Emirates" autocomplete="off" value="' + esc(escCompania) + '">' +
+        '    <input type="hidden" name="escalas[' + idx + '][aerolinea_id]" value="">' +
+        '    <div class="tr-carrier-dropdown" style="display:none;position:absolute;z-index:9999;background:#fff;border:1px solid #ced4da;border-radius:4px;width:100%;max-height:180px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.15)"></div>' +
+        '  </div>' +
+        '  <div class="form-group col-4 mb-0">' +
+        '    <label class="tr-field-label">Nº vuelo</label>' +
+        '    <input type="text" name="escalas[' + idx + '][numero]" class="form-control form-control-sm" placeholder="EK317" value="' + esc(data.numero) + '">' +
+        '  </div>' +
+        '  <div class="form-group col-3 mb-0">' +
+        '    <label class="tr-field-label">Duración</label>' +
+        '    <input type="text" name="escalas[' + idx + '][duracion]" class="form-control form-control-sm" placeholder="7h" value="' + esc(data.duracion) + '">' +
+        '  </div>' +
         '</div>' +
 
-        // Llegada: destino + fecha + hora en una sola fila
-        '<p class="mb-1" ' + lbl + '>Llegada</p>' +
-        '<div class="form-row mb-0">' +
-        '  <div class="form-group col-5"><label style="font-size:.8em">Destino</label>' +
-        '    <input type="text" name="escalas[' + idx + '][destino_sig]" class="form-control form-control-sm" placeholder="NRT" value="' + esc(data.destino_sig) + '"></div>' +
-        '  <div class="form-group col-4"><label style="font-size:.8em">Fecha</label>' +
-        '    <input type="date" name="escalas[' + idx + '][fecha_llegada_sig]" class="form-control form-control-sm" value="' + esc(data.fecha_llegada_sig) + '"></div>' +
-        '  <div class="form-group col-3 mb-0"><label style="font-size:.8em">Hora</label>' +
-        '    <input type="time" name="escalas[' + idx + '][hora_llegada_sig]" class="form-control form-control-sm" value="' + esc(data.hora_llegada_sig) + '"></div>' +
+        // ── Sección SALIDA (aeropuerto de la escala)
+        '<div class="tr-section tr-section-salida mb-2">' +
+        '  <div class="tr-sec-hdr"><i class="fa fa-sign-out"></i><span class="tr-sec-title">Salida desde escala</span></div>' +
+        '  <div class="form-row">' +
+        '    <div class="form-group col-5 mb-2">' +
+        '      <label class="tr-field-label">Código IATA</label>' +
+        '      <input type="text" name="escalas[' + idx + '][aeropuerto]" class="form-control form-control-sm" placeholder="DXB" value="' + esc(data.aeropuerto) + '" autocomplete="off">' +
+        '    </div>' +
+        '    <div class="form-group col-4 mb-2">' +
+        '      <label class="tr-field-label">Fecha</label>' +
+        '      <input type="date" name="escalas[' + idx + '][fecha_salida]" class="form-control form-control-sm" value="' + esc(data.fecha_salida) + '">' +
+        '    </div>' +
+        '    <div class="form-group col-3 mb-2">' +
+        '      <label class="tr-field-label">Hora</label>' +
+        '      <input type="time" name="escalas[' + idx + '][hora_salida]" class="form-control form-control-sm" value="' + esc(data.hora_salida) + '">' +
+        '    </div>' +
+        '  </div>' +
+        '  <div class="form-row tr-subfields">' +
+        '    <div class="form-group col-4 mb-0">' +
+        '      <input type="text" name="escalas[' + idx + '][ciudad]" class="form-control form-control-sm" placeholder="Ciudad" value="' + esc(data.ciudad) + '" autocomplete="off">' +
+        '    </div>' +
+        '    <div class="form-group col-8 mb-0">' +
+        '      <input type="text" name="escalas[' + idx + '][aeropuerto_nombre]" class="form-control form-control-sm" placeholder="Nombre del aeropuerto" value="' + esc(data.aeropuerto_nombre) + '" autocomplete="off">' +
+        '    </div>' +
+        '  </div>' +
         '</div>' +
-        '<div class="form-row">' +
-        '  <div class="form-group col-12"><label style="font-size:.8em">Ciudad destino</label>' +
-        '    <input type="text" name="escalas[' + idx + '][ciudad_sig]" class="form-control form-control-sm" placeholder="Ciudad (ej: Tokio)" value="' + esc(data.ciudad_sig) + '"></div>' +
+
+        // ── Sección LLEGADA (siguiente tramo)
+        '<div class="tr-section tr-section-llegada">' +
+        '  <div class="tr-sec-hdr"><i class="fa fa-sign-in"></i><span class="tr-sec-title">Llegada siguiente tramo</span></div>' +
+        '  <div class="form-row">' +
+        '    <div class="form-group col-5 mb-2">' +
+        '      <label class="tr-field-label">Código IATA</label>' +
+        '      <input type="text" name="escalas[' + idx + '][destino_sig]" class="form-control form-control-sm" placeholder="NRT" value="' + esc(data.destino_sig) + '" autocomplete="off">' +
+        '    </div>' +
+        '    <div class="form-group col-4 mb-2">' +
+        '      <label class="tr-field-label">Fecha</label>' +
+        '      <input type="date" name="escalas[' + idx + '][fecha_llegada_sig]" class="form-control form-control-sm" value="' + esc(data.fecha_llegada_sig) + '">' +
+        '    </div>' +
+        '    <div class="form-group col-3 mb-2">' +
+        '      <label class="tr-field-label">Hora</label>' +
+        '      <input type="time" name="escalas[' + idx + '][hora_llegada_sig]" class="form-control form-control-sm" value="' + esc(data.hora_llegada_sig) + '">' +
+        '    </div>' +
+        '  </div>' +
+        '  <div class="form-row tr-subfields">' +
+        '    <div class="form-group col-4 mb-0">' +
+        '      <input type="text" name="escalas[' + idx + '][ciudad_sig]" class="form-control form-control-sm" placeholder="Ciudad" value="' + esc(data.ciudad_sig) + '" autocomplete="off">' +
+        '    </div>' +
+        '    <div class="form-group col-8 mb-0">' +
+        '      <input type="text" name="escalas[' + idx + '][aeropuerto_nombre_sig]" class="form-control form-control-sm" placeholder="Nombre del aeropuerto" value="' + esc(data.aeropuerto_nombre_sig) + '" autocomplete="off">' +
+        '    </div>' +
+        '  </div>' +
         '</div>' +
-        '<div class="form-row mb-0">' +
-        '  <div class="form-group col-12 mb-0"><label style="font-size:.8em">Nombre aeropuerto destino</label>' +
-        '    <input type="text" name="escalas[' + idx + '][aeropuerto_nombre_sig]" class="form-control form-control-sm" placeholder="Aeropuerto de Narita" value="' + esc(data.aeropuerto_nombre_sig) + '"></div>' +
-        '</div>';
+
+        '</div>'; // escala-row-body
 
     container.appendChild(div);
 }

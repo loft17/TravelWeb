@@ -2857,7 +2857,109 @@ table.dataTable thead td {
     color: red;
     font-size: 16px;
 }
-/* ── Transportes form hints ── */
+/* ── Transportes form — redesign ── */
+
+/* Label genérico */
+.tr-field-label {
+    font-size: .82em;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 3px;
+}
+
+/* Selector de tipo: fila de botones */
+.tr-tipo-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.tr-tipo-btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    background: #fff;
+    color: #6c757d;
+    font-size: .78em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+    white-space: nowrap;
+    line-height: 1;
+}
+.tr-tipo-btn i {
+    font-size: 1.3em;
+}
+.tr-tipo-btn:hover {
+    border-color: #adb5bd;
+    color: #343a40;
+}
+.tr-tipo-btn-active {
+    font-weight: 700;
+}
+
+/* Secciones Salida / Llegada */
+.tr-section {
+    border-left: 3px solid #dee2e6;
+    padding-left: 12px;
+    transition: border-color .2s;
+}
+.tr-sec-hdr {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .78em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #555;
+    margin-bottom: 8px;
+}
+.tr-sec-hdr i {
+    font-size: 1em;
+    opacity: .7;
+}
+.tr-sec-sub {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: #999;
+    font-size: 1em;
+}
+.tr-section-salida .tr-sec-hdr { color: #28a745; }
+.tr-section-llegada .tr-sec-hdr { color: #4e8cff; }
+.tr-section-salida { border-left-color: #28a74540; }
+.tr-section-llegada { border-left-color: #4e8cff40; }
+
+/* Sub-campos (ciudad + nombre terminal) — aspecto secundario */
+.tr-subfields {
+    margin-top: -4px;
+}
+.tr-subfields input {
+    font-size: .82em !important;
+    background: #f8f9fa;
+    border-color: #e0e3e7;
+    color: #555;
+}
+.tr-subfields input::placeholder {
+    color: #bbb;
+}
+
+/* Nota de escalas */
+.tr-escalas-note {
+    font-size: .8em;
+    color: #856404;
+    background: #fff3cd;
+    border: 1px solid #ffc10760;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 8px;
+}
+
+/* Mantener compatibilidad con clases antiguas */
 .tr-section-hdr {
     font-size: .78em;
     color: #888;
@@ -2877,4 +2979,67 @@ table.dataTable thead td {
     border: 1px solid #ffc107;
     border-radius: 6px;
     padding: 5px 10px;
+}
+
+/* ── Escala rows — mismo estilo que el formulario principal ── */
+.escala-row {
+    border: 1px solid #e0e5eb;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+.escala-row-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f7fa;
+    padding: 7px 12px;
+    border-bottom: 1px solid #e0e5eb;
+}
+.escala-row-title {
+    font-size: .8em;
+    font-weight: 700;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.escala-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.escala-wait-label {
+    font-size: .73em;
+    color: #888;
+    white-space: nowrap;
+}
+.escala-wait-input {
+    width: 70px !important;
+    font-size: .82em !important;
+    padding: 2px 6px !important;
+    height: auto !important;
+}
+.escala-remove-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: .9em;
+    padding: 0 2px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color .15s;
+}
+.escala-remove-btn:hover {
+    color: #dc3545;
+}
+.escala-row-body {
+    padding: 10px 12px 6px;
+}
+.escala-row .tr-section {
+    margin-bottom: 8px;
+}
+.escala-row .tr-sec-hdr {
+    margin-bottom: 6px;
+    font-size: .73em;
 }
